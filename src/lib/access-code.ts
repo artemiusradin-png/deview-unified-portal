@@ -4,8 +4,6 @@ import { DEV_DEFAULT_ACCESS_CODE, MIN_ACCESS_CODE_LENGTH_PROD } from "@/lib/acce
 import { PORTAL_ACCESS_CODE_KEYS, readPortalAccessCodeFromEnv } from "@/lib/access-code-env";
 import { pickFromEnvBag } from "@/lib/session-secret-shared";
 
-export { DEV_DEFAULT_ACCESS_CODE, MIN_ACCESS_CODE_LENGTH_PROD } from "@/lib/access-constants";
-
 export function readAccessCodeRaw(): string | undefined {
   const fromNode = pickFromEnvBag(env as Record<string, string | undefined>, PORTAL_ACCESS_CODE_KEYS);
   if (fromNode) return fromNode;
