@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { SESSION_COOKIE } from "@/lib/auth-cookie";
-import { isProductionSessionReady, verifySessionToken } from "@/lib/session";
+import { verifySessionToken } from "@/lib/session";
 
 function isPublicPath(pathname: string) {
   return (
@@ -17,13 +17,6 @@ export async function middleware(request: NextRequest) {
 
   if (isPublicPath(pathname)) {
     return NextResponse.next();
-  }
-
-  if (process.env.NODE_ENV === "production" && !isProductionSessionReady()) {
-    if (pathname.startsWith("/api/")) {
-      return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
-    }
-    return new NextResponse("Service misconfigured", { status: 503, headers: { "Content-Type": "text/plain" } });
   }
 
   const raw = request.cookies.get(SESSION_COOKIE)?.value;

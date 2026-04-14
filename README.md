@@ -13,7 +13,7 @@ Set these in the Vercel project **Environment Variables** (and redeploy):
 
 | Variable | Requirement |
 |----------|-------------|
-| `SESSION_SECRET` | **Required.** At least **32 characters** (e.g. `openssl rand -hex 32`). Used to sign HTTP-only session JWTs. |
+| `SESSION_SECRET` | **Required.** At least **32 characters** (e.g. `openssl rand -hex 32`). Used to sign HTTP-only session JWTs. In Vercel, enable it for **Production** (and Preview if you use previews), then **Redeploy** so new builds and Edge middleware see it. |
 | `PORTAL_DEMO_PASSWORD` | **Required.** At least **16 characters.** The demo gate password is not defaulted in production. |
 | `OPENAI_API_KEY` | Required for AI summaries. |
 

@@ -4,9 +4,23 @@ const encoder = new TextEncoder();
 
 const DEV_FALLBACK_SECRET = "development-only-session-secret-min-32-chars-x";
 
+/**
+ * Read SESSION_SECRET at runtime. Next.js Edge middleware can inline
+ * `process.env.SESSION_SECRET` at build time (undefined if the var was missing
+ * during `next build`), which breaks Vercel after you add secrets unless you
+ * use a dynamic lookup.
+ */
+function readSessionSecret(): string | undefined {
+  const key = ["SESSION", "SECRET"].join("_");
+  const raw = process.env[key];
+  if (typeof raw !== "string") return undefined;
+  const trimmed = raw.trim().replace(/^["']|["']$/g, "");
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
 /** Production requires SESSION_SECRET (≥32 chars). Development falls back if unset. */
 export function getSessionSecretBytes(): Uint8Array | null {
-  const s = process.env.SESSION_SECRET;
+  const s = readSessionSecret();
   if (process.env.NODE_ENV === "production") {
     if (!s || s.length < 32) return null;
     return encoder.encode(s);
@@ -16,7 +30,7 @@ export function getSessionSecretBytes(): Uint8Array | null {
 
 export function isProductionSessionReady(): boolean {
   if (process.env.NODE_ENV !== "production") return true;
-  const s = process.env.SESSION_SECRET;
+  const s = readSessionSecret();
   return !!s && s.length >= 32;
 }
 
