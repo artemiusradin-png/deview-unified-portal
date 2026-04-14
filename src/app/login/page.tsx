@@ -24,14 +24,13 @@ function LoginForm() {
       error?: string;
       code?: string;
       message?: string;
+      hint?: string;
       retryAfter?: number;
     };
     if (!res.ok) {
       if (res.status === 503) {
         if (data.code === "ACCESS_CODE") {
-          setError(
-            "Production: add environment variable PORTAL_ACCESS_CODE (exact name, 8+ characters), enable it for Production, then redeploy.",
-          );
+          setError([data.message, data.hint].filter(Boolean).join(" "));
           return;
         }
         setError(data.message ?? "Server configuration error. Redeploy after setting PORTAL_ACCESS_CODE.");

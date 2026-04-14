@@ -22,11 +22,16 @@ export async function POST(request: Request) {
   }
 
   if (process.env.NODE_ENV === "production" && !isProductionAccessCodeConfigured()) {
+    const isPreview = process.env.VERCEL_ENV === "preview";
     return NextResponse.json(
       {
         error: "Service unavailable",
         code: "ACCESS_CODE",
-        message: "Set PORTAL_ACCESS_CODE (8+ characters) for Production in Vercel, then redeploy.",
+        message:
+          "The server does not see PORTAL_ACCESS_CODE (or it is shorter than 8 characters). This is set in Vercel — it is not the same as typing text into the error box.",
+        hint: isPreview
+          ? "You are on a Preview deployment. In Vercel → Environment Variables, enable PORTAL_ACCESS_CODE for Preview, or use your Production domain (e.g. …vercel.app from the Production deployment)."
+          : "Vercel → Settings → Environment Variables → add PORTAL_ACCESS_CODE (exact name), value 8+ characters, enable Production (and Preview if you use branch previews) → Save → Redeploy.",
       },
       { status: 503 },
     );

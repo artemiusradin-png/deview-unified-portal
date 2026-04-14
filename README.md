@@ -11,7 +11,7 @@ Internal-style portal for **deviewai.com**: global search, results table, Custom
 | Environment | What to set |
 |-------------|-------------|
 | **Local** | Optional `PORTAL_ACCESS_CODE` in `.env.local`. If omitted, defaults to **`deview-demo`**. |
-| **Production (Vercel)** | **`PORTAL_ACCESS_CODE`** — at least **8 characters**. Exact variable name; enable for **Production**, then **redeploy**. |
+| **Production (Vercel)** | **`PORTAL_ACCESS_CODE`** — at least **8 characters**. Exact variable name. Enable for **Production** and for **Preview** if you open branch/preview URLs (otherwise previews won’t see the var). Then **redeploy**. Alternates also work: **`ACCESS_CODE`** or **`PORTAL_CODE`**. |
 
 The same value is used to verify sign-in and to derive signed session cookies (PBKDF2 + JWT). No separate `SESSION_SECRET` or portal password.
 
