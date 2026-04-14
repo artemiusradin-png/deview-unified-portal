@@ -2,12 +2,12 @@ import { unstable_noStore as noStore } from "next/cache";
 import { NextResponse } from "next/server";
 import { SESSION_COOKIE, sessionCookieOptions } from "@/lib/auth-cookie";
 import {
-  getExpectedPassword,
-  isProductionPortalPasswordConfigured,
+  getAccessCodeForAuth,
+  isProductionAccessCodeConfigured,
   passwordsMatch,
-} from "@/lib/password";
+} from "@/lib/access-code";
 import { checkLoginRateLimit, clearLoginFailures, getClientIp, recordLoginFailure } from "@/lib/rate-limit";
-import { createSessionToken, isProductionSessionReady } from "@/lib/session-node";
+import { createSessionToken } from "@/lib/session-node";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -21,27 +21,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Payload too large" }, { status: 413 });
   }
 
-  if (process.env.NODE_ENV === "production") {
-    if (!isProductionSessionReady()) {
-      return NextResponse.json(
-        {
-          error: "Service unavailable",
-          code: "SESSION_SECRET",
-          message: "SESSION_SECRET must be set (32+ characters) in production.",
-        },
-        { status: 503 },
-      );
-    }
-    if (!isProductionPortalPasswordConfigured()) {
-      return NextResponse.json(
-        {
-          error: "Service unavailable",
-          code: "PORTAL_PASSWORD",
-          message: "PORTAL_DEMO_PASSWORD must be set to at least 16 characters in production.",
-        },
-        { status: 503 },
-      );
-    }
+  if (process.env.NODE_ENV === "production" && !isProductionAccessCodeConfigured()) {
+    return NextResponse.json(
+      {
+        error: "Service unavailable",
+        code: "ACCESS_CODE",
+        message: "Set PORTAL_ACCESS_CODE (8+ characters) for Production in Vercel, then redeploy.",
+      },
+      { status: 503 },
+    );
   }
 
   const ip = getClientIp(request);
@@ -65,7 +53,7 @@ export async function POST(request: Request) {
   }
 
   const attempt = (typeof body.password === "string" ? body.password : "").trim();
-  const expected = getExpectedPassword();
+  const expected = getAccessCodeForAuth();
 
   if (!passwordsMatch(attempt, expected)) {
     await new Promise((r) => setTimeout(r, 120));

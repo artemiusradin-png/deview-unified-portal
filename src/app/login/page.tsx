@@ -28,19 +28,13 @@ function LoginForm() {
     };
     if (!res.ok) {
       if (res.status === 503) {
-        if (data.code === "PORTAL_PASSWORD") {
+        if (data.code === "ACCESS_CODE") {
           setError(
-            "Production: set PORTAL_DEMO_PASSWORD to at least 16 characters in Vercel, then redeploy. (Short passwords like deview-demo are rejected on purpose.)",
+            "Production: add environment variable PORTAL_ACCESS_CODE (exact name, 8+ characters), enable it for Production, then redeploy.",
           );
           return;
         }
-        if (data.code === "SESSION_SECRET") {
-          setError(
-            "The server still cannot read SESSION_SECRET. In Vercel → Settings → Environment Variables: (1) Name must be exactly SESSION_SECRET (all caps). (2) Value must be 32+ characters (openssl rand -hex 32 gives 64 hex chars). (3) Enable for Production. (4) Redeploy, ideally with “Clear build cache”.",
-          );
-          return;
-        }
-        setError(data.message ?? "Server configuration error. Check environment variables and redeploy.");
+        setError(data.message ?? "Server configuration error. Redeploy after setting PORTAL_ACCESS_CODE.");
         return;
       }
       if (res.status === 429) {
@@ -48,7 +42,7 @@ function LoginForm() {
         return;
       }
       if (res.status === 401) {
-        setError("Incorrect password.");
+        setError("Incorrect access code.");
         return;
       }
       setError(data.message ?? data.error ?? "Sign-in failed.");
@@ -64,11 +58,11 @@ function LoginForm() {
       <div className="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <p className="text-xs font-medium uppercase tracking-wide text-slate-500">deviewai.com</p>
         <h1 className="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-50">Unified Business Data Portal</h1>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Internal access — sign in with the demo password.</p>
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Internal access — enter your access code.</p>
         <form onSubmit={onSubmit} className="mt-6 space-y-4">
           <div>
             <label htmlFor="password" className="block text-xs font-medium text-slate-700 dark:text-slate-300">
-              Password
+              Access code
             </label>
             <input
               id="password"
@@ -90,9 +84,8 @@ function LoginForm() {
           </button>
         </form>
         <p className="mt-4 text-xs text-slate-500">
-          Development default: <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">deview-demo</code>. In production,
-          set <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">PORTAL_DEMO_PASSWORD</code> (16+ chars) and{" "}
-          <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">SESSION_SECRET</code> (32+ chars).
+          Local default: <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">deview-demo</code>. Production: set{" "}
+          <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">PORTAL_ACCESS_CODE</code> in Vercel (8+ characters).
         </p>
       </div>
     </main>

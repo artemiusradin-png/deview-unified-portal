@@ -4,28 +4,26 @@ Internal-style portal for **deviewai.com**: global search, results table, Custom
 
 - Product spec: [`PRD.md`](./PRD.md)
 - **Local dev:** `npm install` then `npm run dev`
-- **Sign in (dev):** password `deview-demo` unless `PORTAL_DEMO_PASSWORD` is set in `.env.local`
-- **Secrets:** copy [`.env.example`](./.env.example) to `.env.local` (never commit `.env.local`)
+- **Access:** one code for everything — see [`.env.example`](./.env.example). Copy to `.env.local` (never commit `.env.local`).
 
-## Production hardening (Vercel / `NODE_ENV=production`)
+## Authentication (simplified)
 
-Set these in the Vercel project **Environment Variables** (and redeploy):
+| Environment | What to set |
+|-------------|-------------|
+| **Local** | Optional `PORTAL_ACCESS_CODE` in `.env.local`. If omitted, defaults to **`deview-demo`**. |
+| **Production (Vercel)** | **`PORTAL_ACCESS_CODE`** — at least **8 characters**. Exact variable name; enable for **Production**, then **redeploy**. |
 
-| Variable | Requirement |
-|----------|-------------|
-| `SESSION_SECRET` | **Required.** At least **32 characters** (e.g. `openssl rand -hex 32`). Used to sign HTTP-only session JWTs. In Vercel, enable it for **Production** (and Preview if you use previews), then **Redeploy** so new builds and Edge middleware see it. |
-| `PORTAL_DEMO_PASSWORD` | **Required.** At least **16 characters.** The demo gate password is not defaulted in production. |
-| `OPENAI_API_KEY` | Required for AI summaries. |
+The same value is used to verify sign-in and to derive signed session cookies (PBKDF2 + JWT). No separate `SESSION_SECRET` or portal password.
 
-Behavior includes: **HS256 signed sessions**, **constant-time password check**, **login rate limiting** (per IP, best-effort on serverless), **security headers** (CSP, HSTS, `X-Frame-Options: DENY`, etc.), **401 JSON** for unauthenticated API calls (no HTML redirect), **request size limits**, **strict `customerId`** validation on AI route, and **bounded OpenAI timeouts**.
+**Optional:** `OPENAI_API_KEY` for AI case summaries.
 
-For stronger brute-force protection at scale, add **Vercel Firewall** rules or an edge rate-limit backed by Redis (e.g. Upstash) in front of `/api/auth/login`.
+Other behavior: rate-limited login, security headers, API `401` JSON when unauthenticated, request size limits, and bounded OpenAI timeouts.
 
 ## Deploy (Vercel)
 
 1. Push this repo to GitHub.
-2. Import the repo in [Vercel](https://vercel.com/new).
-3. Add the environment variables above.
-4. Redeploy after any secret change.
+2. Import in [Vercel](https://vercel.com/new).
+3. Set **`PORTAL_ACCESS_CODE`** (8+ chars) and optionally **`OPENAI_API_KEY`**.
+4. Redeploy after changes.
 
-Do not commit real secrets; use Vercel project settings for production keys.
+Do not commit real secrets; use Vercel project settings for production.

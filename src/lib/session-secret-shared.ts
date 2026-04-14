@@ -2,14 +2,10 @@ export function normalizeEnvString(raw: string): string {
   return raw.trim().replace(/^["']|["']$/g, "");
 }
 
-/** Avoid bundlers rewriting a literal `SESSION_SECRET` token in `process.env.*`. */
-export function obfuscatedSessionSecretKey(): string {
-  return String.fromCharCode(83, 69, 83, 83, 73, 79, 78, 95, 83, 69, 67, 82, 69, 84);
-}
-
-export function obfuscatedPortalPasswordKey(): string {
+/** Avoid bundlers rewriting a literal env key in `process.env.*`. */
+export function obfuscatedPortalAccessCodeKey(): string {
   return String.fromCharCode(
-    80, 79, 82, 84, 65, 76, 95, 68, 69, 77, 79, 95, 80, 65, 83, 83, 87, 79, 82, 68,
+    80, 79, 82, 84, 65, 76, 95, 65, 67, 67, 69, 83, 83, 95, 67, 79, 68, 69,
   );
 }
 
@@ -30,7 +26,6 @@ export function pickFromEnvBag(
 
 /**
  * Evaluate env lookup at request time (string is not parsed as source by DefinePlugin).
- * eslint-disable-next-line @typescript-eslint/no-implied-eval -- intentional runtime env read on Vercel
  */
 export function readEnvViaDynamicEval(getterSource: string): string | undefined {
   try {
