@@ -1,20 +1,31 @@
 import { env } from "node:process";
-import { normalizeEnvString } from "@/lib/session-secret-shared";
+import {
+  obfuscatedSessionSecretKey,
+  pickFromEnvBag,
+  readEnvViaDynamicEval,
+} from "@/lib/session-secret-shared";
 import { secretToBytes, signSessionJwt } from "@/lib/session-jwt";
 
 const DEV_FALLBACK_SECRET = "development-only-session-secret-min-32-chars-x";
 
-/**
- * Route handlers (Node): use real `env` from node:process so Vercel runtime
- * variables are visible even when Turbopack/webpack snapshot `process.env` at build.
- */
+const SESSION_KEYS = [...new Set([["SESSION", "SECRET"].join("_"), obfuscatedSessionSecretKey()])];
+
 function readSessionSecretNode(): string | undefined {
-  const record = env as Record<string, string | undefined>;
-  const key = ["SESSION", "SECRET"].join("_");
-  const raw = record[key] ?? record["SESSION_SECRET"];
-  if (typeof raw !== "string") return undefined;
-  const t = normalizeEnvString(raw);
-  return t.length > 0 ? t : undefined;
+  const fromImported = pickFromEnvBag(env as Record<string, string | undefined>, SESSION_KEYS);
+  if (fromImported) return fromImported;
+
+  const fromProcess = pickFromEnvBag(process.env as Record<string, string | undefined>, SESSION_KEYS);
+  if (fromProcess) return fromProcess;
+
+  const g = globalThis as unknown as { process?: { env?: Record<string, string | undefined> } };
+  const fromGlobal = pickFromEnvBag(g.process?.env, SESSION_KEYS);
+  if (fromGlobal) return fromGlobal;
+
+  return (
+    readEnvViaDynamicEval(
+      "return typeof process !== 'undefined' && process.env ? process.env['SESSION' + '_' + 'SECRET'] : undefined",
+    ) ?? undefined
+  );
 }
 
 function getSecretBytes(): Uint8Array | null {

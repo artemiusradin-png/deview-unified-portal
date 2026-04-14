@@ -1,3 +1,4 @@
+import { unstable_noStore as noStore } from "next/cache";
 import { NextResponse } from "next/server";
 import { SESSION_COOKIE, sessionCookieOptions } from "@/lib/auth-cookie";
 import {
@@ -9,10 +10,12 @@ import { checkLoginRateLimit, clearLoginFailures, getClientIp, recordLoginFailur
 import { createSessionToken, isProductionSessionReady } from "@/lib/session-node";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 const MAX_BODY_BYTES = 4096;
 
 export async function POST(request: Request) {
+  noStore();
   const len = request.headers.get("content-length");
   if (len && Number(len) > MAX_BODY_BYTES) {
     return NextResponse.json({ error: "Payload too large" }, { status: 413 });

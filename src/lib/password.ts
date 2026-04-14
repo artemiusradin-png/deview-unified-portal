@@ -1,17 +1,33 @@
 import { createHash, timingSafeEqual } from "crypto";
 import { env } from "node:process";
-import { normalizeEnvString } from "@/lib/session-secret-shared";
+import {
+  obfuscatedPortalPasswordKey,
+  pickFromEnvBag,
+  readEnvViaDynamicEval,
+} from "@/lib/session-secret-shared";
 
 const MIN_PROD_PASSWORD_LENGTH = 16;
 
-/** Node route handlers only — uses live Vercel env object. */
+const PORTAL_KEYS = [
+  ...new Set([["PORTAL", "DEMO", "PASSWORD"].join("_"), obfuscatedPortalPasswordKey()]),
+];
+
 function readPortalPassword(): string | undefined {
-  const record = env as Record<string, string | undefined>;
-  const key = ["PORTAL", "DEMO", "PASSWORD"].join("_");
-  const raw = record[key] ?? record["PORTAL_DEMO_PASSWORD"];
-  if (typeof raw !== "string") return undefined;
-  const t = normalizeEnvString(raw);
-  return t.length > 0 ? t : undefined;
+  const fromImported = pickFromEnvBag(env as Record<string, string | undefined>, PORTAL_KEYS);
+  if (fromImported) return fromImported;
+
+  const fromProcess = pickFromEnvBag(process.env as Record<string, string | undefined>, PORTAL_KEYS);
+  if (fromProcess) return fromProcess;
+
+  const g = globalThis as unknown as { process?: { env?: Record<string, string | undefined> } };
+  const fromGlobal = pickFromEnvBag(g.process?.env, PORTAL_KEYS);
+  if (fromGlobal) return fromGlobal;
+
+  return (
+    readEnvViaDynamicEval(
+      "return typeof process !== 'undefined' && process.env ? process.env['PORTAL' + '_' + 'DEMO' + '_' + 'PASSWORD'] : undefined",
+    ) ?? undefined
+  );
 }
 
 export function isProductionPortalPasswordConfigured(): boolean {
