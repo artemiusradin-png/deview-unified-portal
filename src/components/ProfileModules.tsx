@@ -1,22 +1,25 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import type { CustomerProfile } from "@/types/customer";
 import { AiSummaryPanel } from "@/components/AiSummaryPanel";
+import { maskContactDisplay, maskPhoneDisplay } from "@/lib/mask-phone";
 
+/** Client workshop labels A,B,C,F plus full lender modules. */
 const tabs = [
-  { id: "apply", label: "Apply info" },
-  { id: "partakers", label: "Partakers" },
-  { id: "credit", label: "Credit ref" },
+  { id: "apply", label: "A · Apply info" },
+  { id: "partakers", label: "B · Partakers" },
+  { id: "credit", label: "C · Credit ref" },
   { id: "documents", label: "Documents" },
-  { id: "mortgage", label: "Mortgage" },
-  { id: "dsr", label: "DSR" },
+  { id: "mortgage", label: "Mortgage / collateral" },
+  { id: "dsr", label: "F · Income / DSR" },
   { id: "loans", label: "Loan history" },
   { id: "partaking", label: "Partaking history" },
-  { id: "approval", label: "Approval" },
+  { id: "approval", label: "Approval info" },
   { id: "repay", label: "Repay history" },
   { id: "repayCond", label: "Repay condition" },
-  { id: "crm", label: "CRM" },
+  { id: "crm", label: "CRM / remarks" },
   { id: "oca", label: "OCA / Write-off" },
 ] as const;
 
@@ -34,8 +37,19 @@ export function ProfileModules({ profile }: { profile: CustomerProfile }) {
             <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Customer360</p>
             <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-50">{row.name}</h1>
             <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-              {row.idNumber} · {row.mobile} · {row.applicationNumber}
+              HKID/ID <span className="font-mono text-slate-800 dark:text-slate-200">{row.idNumber}</span> · Mobile{" "}
+              <span className="font-mono">{maskPhoneDisplay(row.mobile)}</span> ·{" "}
+              <span className="font-mono">{row.applicationNumber}</span>
             </p>
+            <p className="mt-1 text-xs text-slate-500">
+              Age {row.age} · {row.job} · {row.companyUnit}
+            </p>
+            <Link
+              href={`/assistant?customer=${profile.id}`}
+              className="mt-2 inline-block text-xs font-medium text-slate-900 underline-offset-2 hover:underline dark:text-slate-100"
+            >
+              Open AI assistant with this record →
+            </Link>
           </div>
           <div className="flex flex-wrap gap-2 text-xs">
             <span className="rounded-full bg-slate-100 px-2 py-1 font-medium text-slate-800 dark:bg-slate-800 dark:text-slate-200">
@@ -115,7 +129,7 @@ function Partakers({ profile }: { profile: CustomerProfile }) {
           <li key={i} className="rounded-md border border-slate-100 p-3 dark:border-slate-800">
             <p className="font-medium">{p.name}</p>
             <p className="text-slate-600 dark:text-slate-400">{p.relationship}</p>
-            <p className="text-xs text-slate-500">{p.contact}</p>
+            <p className="text-xs text-slate-500">{maskContactDisplay(p.contact)}</p>
             {p.linkedId ? <p className="mt-1 font-mono text-xs">Linked: {p.linkedId}</p> : null}
           </li>
         ))

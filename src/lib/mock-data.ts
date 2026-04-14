@@ -16,6 +16,9 @@ const profiles: CustomerProfile[] = [
       partakerType: "Primary borrower",
       blacklistFlag: false,
       sourceSystem: "Core LOS / Unit A",
+      age: 44,
+      job: "Director — SME",
+      companyUnit: "Unit A",
     },
     applyInfo: {
       product: "Secured term — SME working capital",
@@ -129,6 +132,9 @@ const profiles: CustomerProfile[] = [
       partakerType: "Primary borrower",
       blacklistFlag: false,
       sourceSystem: "Legacy CRM / Unit B",
+      age: 39,
+      job: "Owner — trading",
+      companyUnit: "Unit B",
     },
     applyInfo: {
       product: "Invoice financing — revolving",
@@ -194,6 +200,9 @@ const profiles: CustomerProfile[] = [
       partakerType: "Primary borrower",
       blacklistFlag: true,
       sourceSystem: "Recovery ledger / Unit C",
+      age: 56,
+      job: "Sales",
+      companyUnit: "Unit C",
     },
     applyInfo: {
       product: "Unsecured personal term",
@@ -265,4 +274,56 @@ export function searchCustomers(query: string): SearchResultRow[] {
 
 export function getProfileById(id: string): CustomerProfile | undefined {
   return profiles.find((p) => p.id === id);
+}
+
+export type ResultFilters = {
+  ageMin?: string;
+  ageMax?: string;
+  job?: string;
+  company?: string;
+};
+
+export function filterSearchRows(rows: SearchResultRow[], f: ResultFilters): SearchResultRow[] {
+  let out = rows;
+  const amin = f.ageMin?.trim() ? parseInt(f.ageMin, 10) : NaN;
+  const amax = f.ageMax?.trim() ? parseInt(f.ageMax, 10) : NaN;
+  if (!Number.isNaN(amin)) out = out.filter((r) => r.age >= amin);
+  if (!Number.isNaN(amax)) out = out.filter((r) => r.age <= amax);
+  if (f.job?.trim()) {
+    const j = f.job.trim().toLowerCase();
+    out = out.filter((r) => r.job.toLowerCase().includes(j));
+  }
+  if (f.company?.trim()) {
+    const c = f.company.trim().toLowerCase();
+    out = out.filter(
+      (r) => r.companyUnit.toLowerCase().includes(c) || r.sourceSystem.toLowerCase().includes(c),
+    );
+  }
+  return out;
+}
+
+/** Compact JSON for the AI assistant (internal data only). */
+export function profileToChatContext(profile: CustomerProfile): string {
+  const row = profile.searchRow;
+  const payload = {
+    hkid: row.idNumber,
+    name: row.name,
+    companyUnit: row.companyUnit,
+    sourceSystem: row.sourceSystem,
+    status: row.status,
+    loanType: row.loanType,
+    applicationNumber: row.applicationNumber,
+    loanNumber: row.loanNumber,
+    age: row.age,
+    job: row.job,
+    applyInfo: profile.applyInfo,
+    repayCondition: profile.repayCondition,
+    loanHistory: profile.loanHistory,
+    repayHistory: profile.repayHistory.slice(-6),
+    approvalInfo: profile.approvalInfo,
+    partakers: profile.partakers,
+    ocaWriteOff: profile.ocaWriteOff,
+    crm: profile.crm.slice(0, 4),
+  };
+  return JSON.stringify(payload, null, 2);
 }

@@ -14,7 +14,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
             href="/"
             className="rounded-md px-2 py-1.5 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
           >
-            Search
+            Dashboard
           </Link>
           <Link
             href="/results?q="
@@ -22,13 +22,22 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
           >
             Last results
           </Link>
+          <Link
+            href="/assistant"
+            className="rounded-md px-2 py-1.5 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+          >
+            AI assistant
+          </Link>
         </nav>
         <div className="border-t border-slate-200 p-3 dark:border-slate-800">
           <LogoutButton />
         </div>
       </aside>
       <div className="flex min-h-full flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-900 md:hidden">
+        <header className="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-900 md:hidden">
+          <Link href="/assistant" className="text-xs font-medium text-slate-700 dark:text-slate-300">
+            Assistant
+          </Link>
           <span className="text-sm font-semibold">Data Portal</span>
           <div className="w-24">
             <LogoutButton />

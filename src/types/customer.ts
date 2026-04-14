@@ -5,12 +5,19 @@ export type SearchResultRow = {
   applicationNumber: string;
   loanNumber: string;
   applyDate: string;
+  /** HKID / NRIC / ID as used in discovery brief */
   idNumber: string;
   name: string;
   mobile: string;
   partakerType: string;
   blacklistFlag: boolean;
+  /** Business unit / source (company-scoped views) */
   sourceSystem: string;
+  /** Age for filter (discovery: age + job filters) */
+  age: number;
+  job: string;
+  /** Company / unit for scoping */
+  companyUnit: string;
 };
 
 export type CustomerProfile = {

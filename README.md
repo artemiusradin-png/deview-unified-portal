@@ -17,7 +17,7 @@ The same value is used to verify sign-in and to derive signed session cookies (P
 
 **Optional:** `OPENAI_API_KEY` for AI case summaries.
 
-Other behavior: rate-limited login, security headers, API `401` JSON when unauthenticated, request size limits, and bounded OpenAI timeouts.
+Other behavior: rate-limited login, security headers, API `401` JSON when unauthenticated, request size limits, bounded OpenAI timeouts, **AI assistant** (`/assistant`) grounded on the open borrower record when launched from a profile, and UI aligned with the **Project_1_questions_for_development** discovery brief (HKID search, age/job filters, masked phones, module labels A/B/C/F).
 
 ## Deploy (Vercel)
 
