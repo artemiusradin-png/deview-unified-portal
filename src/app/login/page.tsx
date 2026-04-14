@@ -36,7 +36,7 @@ function LoginForm() {
         }
         if (data.code === "SESSION_SECRET") {
           setError(
-            "Production: set SESSION_SECRET (32+ random characters, e.g. openssl rand -hex 32) in Vercel, then redeploy.",
+            "The server still cannot read SESSION_SECRET. In Vercel → Settings → Environment Variables: (1) Name must be exactly SESSION_SECRET (all caps). (2) Value must be 32+ characters (openssl rand -hex 32 gives 64 hex chars). (3) Enable for Production. (4) Redeploy, ideally with “Clear build cache”.",
           );
           return;
         }

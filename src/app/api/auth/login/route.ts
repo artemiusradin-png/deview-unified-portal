@@ -6,7 +6,9 @@ import {
   passwordsMatch,
 } from "@/lib/password";
 import { checkLoginRateLimit, clearLoginFailures, getClientIp, recordLoginFailure } from "@/lib/rate-limit";
-import { createSessionToken, isProductionSessionReady } from "@/lib/session";
+import { createSessionToken, isProductionSessionReady } from "@/lib/session-node";
+
+export const dynamic = "force-dynamic";
 
 const MAX_BODY_BYTES = 4096;
 

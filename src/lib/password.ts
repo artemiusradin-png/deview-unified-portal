@@ -1,14 +1,17 @@
 import { createHash, timingSafeEqual } from "crypto";
+import { env } from "node:process";
+import { normalizeEnvString } from "@/lib/session-secret-shared";
 
 const MIN_PROD_PASSWORD_LENGTH = 16;
 
-/** Same pattern as SESSION_SECRET — avoids Next.js inlining `process.env.*` at build time. */
+/** Node route handlers only — uses live Vercel env object. */
 function readPortalPassword(): string | undefined {
+  const record = env as Record<string, string | undefined>;
   const key = ["PORTAL", "DEMO", "PASSWORD"].join("_");
-  const raw = process.env[key];
+  const raw = record[key] ?? record["PORTAL_DEMO_PASSWORD"];
   if (typeof raw !== "string") return undefined;
-  const trimmed = raw.trim().replace(/^["']|["']$/g, "");
-  return trimmed.length > 0 ? trimmed : undefined;
+  const t = normalizeEnvString(raw);
+  return t.length > 0 ? t : undefined;
 }
 
 export function isProductionPortalPasswordConfigured(): boolean {
