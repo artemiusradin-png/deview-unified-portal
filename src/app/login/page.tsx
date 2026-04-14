@@ -17,11 +17,41 @@ function LoginForm() {
     const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ password: password.trim() }),
     });
     setPending(false);
+    const data = (await res.json().catch(() => ({}))) as {
+      error?: string;
+      code?: string;
+      message?: string;
+      retryAfter?: number;
+    };
     if (!res.ok) {
-      setError("Incorrect password.");
+      if (res.status === 503) {
+        if (data.code === "PORTAL_PASSWORD") {
+          setError(
+            "Production: set PORTAL_DEMO_PASSWORD to at least 16 characters in Vercel, then redeploy. (Short passwords like deview-demo are rejected on purpose.)",
+          );
+          return;
+        }
+        if (data.code === "SESSION_SECRET") {
+          setError(
+            "Production: set SESSION_SECRET (32+ random characters, e.g. openssl rand -hex 32) in Vercel, then redeploy.",
+          );
+          return;
+        }
+        setError(data.message ?? "Server configuration error. Check environment variables and redeploy.");
+        return;
+      }
+      if (res.status === 429) {
+        setError(`Too many sign-in attempts. Wait ${data.retryAfter ?? 60} seconds and try again.`);
+        return;
+      }
+      if (res.status === 401) {
+        setError("Incorrect password.");
+        return;
+      }
+      setError(data.message ?? data.error ?? "Sign-in failed.");
       return;
     }
     const dest = searchParams.get("from") || "/";

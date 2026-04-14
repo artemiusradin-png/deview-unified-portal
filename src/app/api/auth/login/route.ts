@@ -18,10 +18,24 @@ export async function POST(request: Request) {
 
   if (process.env.NODE_ENV === "production") {
     if (!isProductionSessionReady()) {
-      return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
+      return NextResponse.json(
+        {
+          error: "Service unavailable",
+          code: "SESSION_SECRET",
+          message: "SESSION_SECRET must be set (32+ characters) in production.",
+        },
+        { status: 503 },
+      );
     }
     if (!isProductionPortalPasswordConfigured()) {
-      return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
+      return NextResponse.json(
+        {
+          error: "Service unavailable",
+          code: "PORTAL_PASSWORD",
+          message: "PORTAL_DEMO_PASSWORD must be set to at least 16 characters in production.",
+        },
+        { status: 503 },
+      );
     }
   }
 
@@ -45,7 +59,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const attempt = typeof body.password === "string" ? body.password : "";
+  const attempt = (typeof body.password === "string" ? body.password : "").trim();
   const expected = getExpectedPassword();
 
   if (!passwordsMatch(attempt, expected)) {
