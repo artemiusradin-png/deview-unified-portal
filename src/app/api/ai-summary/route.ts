@@ -1,36 +1,45 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
 import { getProfileById } from "@/lib/mock-data";
+import { isValidCustomerId } from "@/lib/validation";
 
 export const runtime = "nodejs";
+
+const MAX_BODY_BYTES = 8192;
+
+function clientError(message: string, status: number) {
+  return NextResponse.json({ error: message }, { status });
+}
 
 export async function POST(request: Request) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    return NextResponse.json(
-      {
-        error: "missing_api_key",
-        message: "Add OPENAI_API_KEY to your environment (e.g. Vercel project env or .env.local).",
-      },
-      { status: 503 },
-    );
+    return clientError("Service unavailable", 503);
   }
 
-  let body: { customerId?: string } = {};
+  const len = request.headers.get("content-length");
+  if (len && Number(len) > MAX_BODY_BYTES) {
+    return clientError("Payload too large", 413);
+  }
+
+  let body: { customerId?: unknown } = {};
   try {
-    body = await request.json();
+    const text = await request.text();
+    if (text.length > MAX_BODY_BYTES) {
+      return clientError("Payload too large", 413);
+    }
+    body = JSON.parse(text) as { customerId?: unknown };
   } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return clientError("Invalid JSON", 400);
   }
 
-  const customerId = body.customerId;
-  if (!customerId) {
-    return NextResponse.json({ error: "customerId required" }, { status: 400 });
+  if (!isValidCustomerId(body.customerId)) {
+    return clientError("Invalid request", 400);
   }
 
-  const profile = getProfileById(customerId);
+  const profile = getProfileById(body.customerId);
   if (!profile) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return clientError("Not found", 404);
   }
 
   const payload = {
@@ -43,29 +52,33 @@ export async function POST(request: Request) {
     crm: profile.crm.slice(0, 5),
   };
 
-  const openai = new OpenAI({ apiKey });
+  const openai = new OpenAI({ apiKey, timeout: 45_000, maxRetries: 1 });
 
-  const completion = await openai.chat.completions.create({
-    model: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
-    messages: [
-      {
-        role: "system",
-        content:
-          "You are an internal loan operations assistant. Summarize the customer record for staff: key status, repayment health, risks, approvals, and recovery/write-off context. Use short bullet points. Do not invent facts beyond the JSON. Neutral professional tone.",
-      },
-      {
-        role: "user",
-        content: `Summarize this internal customer JSON:\n${JSON.stringify(payload, null, 2)}`,
-      },
-    ],
-    temperature: 0.3,
-    max_tokens: 600,
-  });
+  try {
+    const completion = await openai.chat.completions.create({
+      model: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are an internal loan operations assistant. Summarize the customer record for staff: key status, repayment health, risks, approvals, and recovery/write-off context. Use short bullet points. Do not invent facts beyond the JSON. Neutral professional tone.",
+        },
+        {
+          role: "user",
+          content: `Summarize this internal customer JSON:\n${JSON.stringify(payload, null, 2)}`,
+        },
+      ],
+      temperature: 0.3,
+      max_tokens: 600,
+    });
 
-  const text = completion.choices[0]?.message?.content?.trim() ?? "";
-  if (!text) {
-    return NextResponse.json({ error: "Empty model response" }, { status: 502 });
+    const text = completion.choices[0]?.message?.content?.trim() ?? "";
+    if (!text) {
+      return clientError("Upstream error", 502);
+    }
+
+    return NextResponse.json({ summary: text });
+  } catch {
+    return clientError("Upstream error", 502);
   }
-
-  return NextResponse.json({ summary: text });
 }

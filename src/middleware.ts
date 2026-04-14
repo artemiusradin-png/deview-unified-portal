@@ -1,20 +1,38 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { SESSION_COOKIE } from "@/lib/auth-cookie";
+import { isProductionSessionReady, verifySessionToken } from "@/lib/session";
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  if (
+function isPublicPath(pathname: string) {
+  return (
     pathname.startsWith("/login") ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico"
-  ) {
+  );
+}
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (isPublicPath(pathname)) {
     return NextResponse.next();
   }
 
-  const session = request.cookies.get(SESSION_COOKIE);
-  if (!session?.value) {
+  if (process.env.NODE_ENV === "production" && !isProductionSessionReady()) {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
+    }
+    return new NextResponse("Service misconfigured", { status: 503, headers: { "Content-Type": "text/plain" } });
+  }
+
+  const raw = request.cookies.get(SESSION_COOKIE)?.value;
+  const ok = await verifySessionToken(raw);
+
+  if (!ok) {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const login = new URL("/login", request.url);
     login.searchParams.set("from", pathname);
     return NextResponse.redirect(login);

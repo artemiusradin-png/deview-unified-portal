@@ -21,13 +21,15 @@ export function AiSummaryPanel({ customerId }: Props) {
       });
       const data = await res.json();
       if (!res.ok) {
-        if (data.error === "missing_api_key") {
-          setError(
-            "OpenAI key is not configured on the server. Add OPENAI_API_KEY in .env.local (local) or Vercel → Settings → Environment Variables.",
-          );
+        if (res.status === 503) {
+          setError("AI summaries are unavailable (check OPENAI_API_KEY on the server).");
           return;
         }
-        setError(data.message ?? data.error ?? "Request failed");
+        if (res.status === 502) {
+          setError("The AI service returned an error. Try again in a moment.");
+          return;
+        }
+        setError(typeof data.error === "string" ? data.error : "Request failed");
         return;
       }
       setSummary(data.summary as string);

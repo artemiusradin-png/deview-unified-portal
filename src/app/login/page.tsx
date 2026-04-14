@@ -60,8 +60,9 @@ function LoginForm() {
           </button>
         </form>
         <p className="mt-4 text-xs text-slate-500">
-          Default demo password is <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">deview-demo</code> unless{" "}
-          <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">PORTAL_DEMO_PASSWORD</code> is set.
+          Development default: <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">deview-demo</code>. In production,
+          set <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">PORTAL_DEMO_PASSWORD</code> (16+ chars) and{" "}
+          <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">SESSION_SECRET</code> (32+ chars).
         </p>
       </div>
     </main>

@@ -1,5 +1,17 @@
 export const SESSION_COOKIE = "deview_session";
 
-export function getExpectedPassword(): string {
-  return process.env.PORTAL_DEMO_PASSWORD ?? "deview-demo";
+export function sessionCookieOptions(): {
+  httpOnly: boolean;
+  sameSite: "lax";
+  secure: boolean;
+  path: string;
+  maxAge: number;
+} {
+  return {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 8,
+  };
 }
