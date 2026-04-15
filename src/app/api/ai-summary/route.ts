@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
-import { getProfileById } from "@/lib/mock-data";
+import { getProfileById } from "@/lib/portal-data";
 import { isValidCustomerId } from "@/lib/validation";
 
 export const runtime = "nodejs";
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     return clientError("Invalid request", 400);
   }
 
-  const profile = getProfileById(body.customerId);
+  const profile = await getProfileById(body.customerId);
   if (!profile) {
     return clientError("Not found", 404);
   }

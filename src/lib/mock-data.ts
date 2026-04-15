@@ -1,6 +1,7 @@
 import type { CustomerProfile, SearchResultRow } from "@/types/customer";
 
-const profiles: CustomerProfile[] = [
+/** Exported for DB seed — same records power mock fallback when DATABASE_URL is unset. */
+export const profiles: CustomerProfile[] = [
   {
     id: "cust-001",
     searchRow: {
@@ -246,6 +247,294 @@ const profiles: CustomerProfile[] = [
       ocaRecords: ["OCA ref OCA-2019-7712 — demand and filing logged."],
       writeOffRecords: ["WO-2021-0099 — principal SGD 21,400 + accrued charges."],
       recovery: "Lifetime recovery SGD 3,200; outstanding written balance carried.",
+    },
+  },
+  {
+    id: "cust-004",
+    searchRow: {
+      id: "cust-004",
+      status: "Pending approval",
+      loanType: "Bridging loan",
+      applicationNumber: "APP-2025-1188",
+      loanNumber: "LN-900114",
+      applyDate: "2025-01-22",
+      idNumber: "T5566778D",
+      name: "Aisha Binte Rahman",
+      mobile: "+65 8111 2204",
+      partakerType: "Primary borrower",
+      blacklistFlag: false,
+      sourceSystem: "SME Intake / Unit D",
+      age: 36,
+      job: "Operations Manager",
+      companyUnit: "Unit D",
+    },
+    applyInfo: {
+      product: "Short-term bridging facility",
+      branch: "South Hub",
+      applicationDate: "2025-01-22",
+      status: "Pending final approval",
+      applicantNote: "Bridge requested ahead of expected receivables release next month.",
+    },
+    partakers: [
+      {
+        name: "Rahman Logistics Pte Ltd",
+        relationship: "Employer / related company",
+        contact: "ops@rahmanlogistics.example",
+      },
+      {
+        name: "Mohd Firdaus",
+        relationship: "Guarantor",
+        contact: "+65 8111 2205",
+      },
+    ],
+    creditRef: {
+      summary: "Internal review acceptable; bureau clean with moderate existing leverage.",
+      indicators: ["No write-off history", "One active auto loan externally"],
+    },
+    documents: [
+      { type: "Payslips", date: "2025-01-20", reference: "DOC-PAY-55102" },
+      { type: "Bank statements", date: "2025-01-21", reference: "DOC-BNK-99120" },
+    ],
+    mortgage: {
+      applicable: false,
+      assetSummary: "Unsecured bridge supported by salary and receivables evidence.",
+      collateralRef: "—",
+    },
+    dsr: {
+      income: "SGD 11,800 / month",
+      expenditure: "SGD 5,100 / month",
+      ratio: "43.2%",
+      notes: "Within underwriting range pending employer callback completion.",
+    },
+    loanHistory: [
+      {
+        loanNumber: "LN-900114",
+        product: "Bridging loan",
+        status: "Application",
+        period: "2025-01 — present",
+      },
+    ],
+    partakingHistory: [],
+    approvalInfo: [
+      {
+        stage: "Credit analyst review",
+        date: "2025-01-24",
+        reviewer: "N. Lim",
+        decision: "Recommend approve",
+        notes: "Awaiting sign-off from final approver.",
+      },
+    ],
+    repayHistory: [],
+    repayCondition: {
+      terms: "Not yet disbursed",
+      state: "Pre-disbursement",
+      overdueDays: 0,
+      collectionNotes: "N/A",
+    },
+    crm: [
+      {
+        date: "2025-01-24",
+        author: "Sales - H. Tan",
+        note: "Customer confirmed use of funds for supplier settlement bridge.",
+      },
+    ],
+    ocaWriteOff: {
+      ocaRecords: ["None."],
+      writeOffRecords: ["None."],
+      recovery: "N/A",
+    },
+  },
+  {
+    id: "cust-005",
+    searchRow: {
+      id: "cust-005",
+      status: "Active watchlist",
+      loanType: "Merchant cash advance",
+      applicationNumber: "APP-2024-7711",
+      loanNumber: "LN-882004",
+      applyDate: "2024-03-04",
+      idNumber: "H7654321K",
+      name: "Jason Ong",
+      mobile: "+65 9333 8841",
+      partakerType: "Primary borrower",
+      blacklistFlag: false,
+      sourceSystem: "Collections CRM / Unit E",
+      age: 41,
+      job: "Restaurant Owner",
+      companyUnit: "Unit E",
+    },
+    applyInfo: {
+      product: "Merchant cash advance",
+      branch: "Retail Finance Desk",
+      applicationDate: "2024-03-04",
+      status: "Restructured - monitored",
+      applicantNote: "Sales softened after mall renovation works reduced foot traffic.",
+    },
+    partakers: [
+      {
+        name: "Ong Mei Lin",
+        relationship: "Spouse / emergency contact",
+        contact: "+65 9333 8842",
+      },
+    ],
+    creditRef: {
+      summary: "Internal score deteriorated after missed deductions in Q4 2024.",
+      indicators: ["Two recent promise-to-pay arrangements", "No legal escalation yet"],
+    },
+    documents: [
+      { type: "Merchant statements", date: "2024-12-15", reference: "DOC-MER-77701" },
+      { type: "Restructure letter", date: "2025-01-08", reference: "DOC-RST-44002" },
+    ],
+    mortgage: {
+      applicable: false,
+      assetSummary: "Unsecured MCA structure.",
+      collateralRef: "—",
+    },
+    dsr: {
+      income: "Variable - avg SGD 16,200 / month",
+      expenditure: "SGD 10,700 / month",
+      ratio: "66.0%",
+      notes: "Stress case remains elevated despite revised deduction schedule.",
+    },
+    loanHistory: [
+      {
+        loanNumber: "LN-882004",
+        product: "Merchant cash advance",
+        status: "Active - monitored",
+        period: "2024-03 — present",
+      },
+    ],
+    partakingHistory: [
+      {
+        period: "2022",
+        description: "Guarantor for sibling business overdraft.",
+        relatedApplication: "APP-2022-6670",
+      },
+    ],
+    approvalInfo: [
+      {
+        stage: "Restructure approval",
+        date: "2025-01-06",
+        reviewer: "Workout Desk",
+        decision: "Approved revised deduction schedule",
+        notes: "Weekly monitoring required for first 8 weeks.",
+      },
+    ],
+    repayHistory: [
+      { date: "2025-01-15", amount: "SGD 2,100", balanceAfter: "SGD 38,400", channel: "Card settlements" },
+      { date: "2025-01-22", amount: "SGD 1,950", balanceAfter: "SGD 36,450", channel: "Card settlements" },
+    ],
+    repayCondition: {
+      terms: "Daily card settlement sweep with temporary reduced cap",
+      state: "Under watch",
+      overdueDays: 7,
+      collectionNotes: "Escalate if two more weekly sweeps miss target.",
+    },
+    crm: [
+      {
+        date: "2025-01-23",
+        author: "Collections - P. Dass",
+        note: "Owner reported traffic improving; next review in one week.",
+      },
+    ],
+    ocaWriteOff: {
+      ocaRecords: ["Soft collection queue active."],
+      writeOffRecords: ["None."],
+      recovery: "N/A",
+    },
+  },
+  {
+    id: "cust-006",
+    searchRow: {
+      id: "cust-006",
+      status: "Closed - repaid",
+      loanType: "Equipment financing",
+      applicationNumber: "APP-2022-5104",
+      loanNumber: "LN-440773",
+      applyDate: "2022-09-14",
+      idNumber: "M3344556P",
+      name: "Ng Sok Hoon",
+      mobile: "+65 8770 1432",
+      partakerType: "Primary borrower",
+      blacklistFlag: false,
+      sourceSystem: "Asset Finance / Unit F",
+      age: 52,
+      job: "Workshop Owner",
+      companyUnit: "Unit F",
+    },
+    applyInfo: {
+      product: "Equipment financing - CNC machine",
+      branch: "Industrial Lending",
+      applicationDate: "2022-09-14",
+      status: "Closed after full repayment",
+      applicantNote: "Facility settled early after increase in export orders.",
+    },
+    partakers: [
+      {
+        name: "Sok Hoon Engineering",
+        relationship: "Borrowing business",
+        contact: "admin@sokhoon-eng.example",
+      },
+    ],
+    creditRef: {
+      summary: "Strong historical repayment performance and good utilization discipline.",
+      indicators: ["No arrears history", "Early settlement completed"],
+    },
+    documents: [
+      { type: "Invoice for equipment", date: "2022-09-10", reference: "DOC-EQP-23019" },
+      { type: "Discharge letter", date: "2024-11-03", reference: "DOC-DSC-55004" },
+    ],
+    mortgage: {
+      applicable: true,
+      assetSummary: "First charge over financed CNC unit.",
+      collateralRef: "COL-AF-440773",
+    },
+    dsr: {
+      income: "SGD 24,000 / month",
+      expenditure: "SGD 9,800 / month",
+      ratio: "40.8%",
+      notes: "Historical DSR remained compliant throughout facility life.",
+    },
+    loanHistory: [
+      {
+        loanNumber: "LN-440773",
+        product: "Equipment financing",
+        status: "Closed - repaid",
+        period: "2022-10 — 2024-11",
+      },
+    ],
+    partakingHistory: [],
+    approvalInfo: [
+      {
+        stage: "Initial approval",
+        date: "2022-09-20",
+        reviewer: "Asset Finance Committee",
+        decision: "Approved",
+        notes: "Standard asset charge and insurance conditions applied.",
+      },
+    ],
+    repayHistory: [
+      { date: "2024-09-03", amount: "SGD 4,500", balanceAfter: "SGD 8,900", channel: "Bank transfer" },
+      { date: "2024-10-03", amount: "SGD 4,500", balanceAfter: "SGD 4,400", channel: "Bank transfer" },
+      { date: "2024-11-03", amount: "SGD 4,400", balanceAfter: "SGD 0", channel: "Bank transfer" },
+    ],
+    repayCondition: {
+      terms: "Monthly instalment - facility closed",
+      state: "Closed",
+      overdueDays: 0,
+      collectionNotes: "No collection actions required.",
+    },
+    crm: [
+      {
+        date: "2024-11-05",
+        author: "Servicing - C. Neo",
+        note: "Discharge documents sent; customer thanked team and may reapply in H2.",
+      },
+    ],
+    ocaWriteOff: {
+      ocaRecords: ["None."],
+      writeOffRecords: ["None."],
+      recovery: "N/A",
     },
   },
 ];

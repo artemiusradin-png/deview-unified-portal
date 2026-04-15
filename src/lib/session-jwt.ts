@@ -1,25 +1,35 @@
 import { SignJWT, jwtVerify } from "jose";
 
-const encoder = new TextEncoder();
-
-export function secretToBytes(secret: string): Uint8Array {
-  return encoder.encode(secret);
-}
-
-export async function signSessionJwt(secret: Uint8Array): Promise<string> {
-  return new SignJWT({})
+export async function signUserJwt(
+  secret: Uint8Array,
+  userId: string,
+  email: string,
+  role: string,
+): Promise<string> {
+  return new SignJWT({ email, role })
     .setProtectedHeader({ alg: "HS256" })
-    .setSubject("portal")
+    .setSubject(userId)
     .setIssuedAt()
     .setExpirationTime("8h")
     .sign(secret);
 }
 
-export async function verifySessionJwt(token: string, secret: Uint8Array): Promise<boolean> {
+export type VerifiedSession =
+  | { ok: true; userId: string; email: string; role: string }
+  | { ok: false };
+
+export async function verifyUserJwt(token: string, secret: Uint8Array): Promise<VerifiedSession> {
   try {
-    await jwtVerify(token, secret);
-    return true;
+    const { payload } = await jwtVerify(token, secret);
+    const sub = payload.sub;
+    if (!sub) return { ok: false };
+    return {
+      ok: true,
+      userId: sub,
+      email: typeof payload.email === "string" ? payload.email : "",
+      role: typeof payload.role === "string" ? payload.role : "VIEWER",
+    };
   } catch {
-    return false;
+    return { ok: false };
   }
 }

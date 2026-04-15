@@ -1,11 +1,11 @@
 import { AssistantClient } from "@/components/AssistantClient";
-import { getProfileById, profileToChatContext } from "@/lib/mock-data";
+import { getProfileById, profileToChatContext } from "@/lib/portal-data";
 
 type Props = { searchParams: Promise<{ customer?: string }> };
 
 export default async function AssistantPage({ searchParams }: Props) {
   const { customer } = await searchParams;
-  const profile = customer ? getProfileById(customer) : undefined;
+  const profile = customer ? await getProfileById(customer) : undefined;
   const initialContext = profile ? profileToChatContext(profile) : null;
 
   return (

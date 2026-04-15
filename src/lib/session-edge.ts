@@ -1,21 +1,19 @@
-import { DEV_DEFAULT_ACCESS_CODE, MIN_ACCESS_CODE_LENGTH_PROD } from "@/lib/access-constants";
-import { readPortalAccessCodeFromEnv } from "@/lib/access-code-env";
-import { deriveSessionKeyBytes } from "@/lib/derive-session-key";
-import { verifySessionJwt } from "@/lib/session-jwt";
-
-function effectiveAccessCodeForSession(): string | null {
-  const raw = readPortalAccessCodeFromEnv();
-  if (process.env.NODE_ENV === "production") {
-    if (!raw || raw.length < MIN_ACCESS_CODE_LENGTH_PROD) return null;
-    return raw;
-  }
-  return raw ?? DEV_DEFAULT_ACCESS_CODE;
-}
+import { getAuthSecretBytes } from "@/lib/auth-secret";
+import { verifyUserJwt } from "@/lib/session-jwt";
 
 export async function verifySessionToken(token: string | undefined): Promise<boolean> {
   if (!token) return false;
-  const code = effectiveAccessCodeForSession();
-  if (!code) return false;
-  const bytes = await deriveSessionKeyBytes(code);
-  return verifySessionJwt(token, bytes);
+  const secret = getAuthSecretBytes();
+  const v = await verifyUserJwt(token, secret);
+  return v.ok;
+}
+
+export async function getSessionFromToken(
+  token: string | undefined,
+): Promise<{ userId: string; email: string; role: string } | null> {
+  if (!token) return null;
+  const secret = getAuthSecretBytes();
+  const v = await verifyUserJwt(token, secret);
+  if (!v.ok) return null;
+  return { userId: v.userId, email: v.email, role: v.role };
 }

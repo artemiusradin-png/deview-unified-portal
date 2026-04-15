@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  STAFF
+  VIEWER
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  name         String?
+  role         Role       @default(STAFF)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  auditLogs    AuditLog[]
+}
+
+model AuditLog {
+  id String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  resource  String?
+  metadata  Json?
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+}
+
+model DataSource {
+  id               String    @id @default(cuid())
+  name             String
+  businessOwner    String?
+  businessUnit     String?
+  format           String
+  location         String?
+  accessMethod     String?
+  refreshMethod    String?
+  refreshFrequency String?
+  screenshotNote   String?
+  status           String    @default("unknown")
+  lastSyncAt       DateTime?
+  notes            String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  syncJobs         SyncJob[]
+}
+
+model SyncJob {
+  id               String     @id @default(cuid())
+  dataSourceId     String
+  dataSource       DataSource @relation(fields: [dataSourceId], references: [id], onDelete: Cascade)
+  status           String
+  message          String?
+  recordsProcessed Int?
+  startedAt        DateTime   @default(now())
+  finishedAt       DateTime?
+
+  @@index([dataSourceId, startedAt])
+}
+
+model CustomerRecord {
+  id                 String   @id
+  hkid               String
+  name               String
+  rawMobile          String
+  status             String
+  loanType           String
+  applicationNumber  String
+  loanNumber         String
+  applyDate          String
+  partakerType       String
+  blacklistFlag      Boolean  @default(false)
+  sourceSystem       String
+  age                Int
+  job                String
+  companyUnit        String
+  profileJson        Json
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([hkid])
+  @@index([name])
+}

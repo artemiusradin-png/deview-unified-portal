@@ -1,14 +1,27 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
-import { getProfileById } from "@/lib/mock-data";
+import { writeAudit } from "@/lib/audit";
+import { getServerSession } from "@/lib/auth-session";
+import { getProfileById } from "@/lib/portal-data";
 import { ProfileModules } from "@/components/ProfileModules";
 
 type Props = { params: Promise<{ id: string }> };
 
 export default async function ProfilePage({ params }: Props) {
   const { id } = await params;
-  const profile = getProfileById(id);
+  const profile = await getProfileById(id);
   if (!profile) notFound();
+
+  const session = await getServerSession();
+  const h = await headers();
+  await writeAudit({
+    userId: session?.userId,
+    action: "profile.view",
+    resource: id,
+    ip: h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null,
+    userAgent: h.get("user-agent"),
+  });
 
   return (
     <div className="mx-auto max-w-6xl">
