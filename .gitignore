@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# Local commercial / client docs (do not publish)
+Commercial_Offer_Mr_Lam.md
+
 # debug
 npm-debug.log*
 yarn-debug.log*
