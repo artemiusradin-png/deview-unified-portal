@@ -29,15 +29,17 @@ export async function POST(request: Request) {
 
   if (process.env.NODE_ENV === "production" && !isProductionAuthSecretConfigured()) {
     const isPreview = process.env.VERCEL_ENV === "preview";
+    const hasDb = !!process.env.DATABASE_URL?.trim();
     return NextResponse.json(
       {
         error: "Service unavailable",
-        code: "AUTH_SECRET",
-        message:
-          "Set AUTH_SECRET in the deployment environment (32+ characters). It is used to sign session cookies.",
+        code: hasDb ? "AUTH_SECRET" : "ACCESS_CODE",
+        message: hasDb
+          ? "Set AUTH_SECRET (32+ characters) when DATABASE_URL is used. It signs session cookies for database users."
+          : "Set PORTAL_ACCESS_CODE (8+ characters) for access-code-only mode, or add AUTH_SECRET (32+) if you prefer a dedicated signing key.",
         hint: isPreview
-          ? "Preview deployments need AUTH_SECRET enabled for Preview in Vercel, or use Production."
-          : "Vercel → Settings → Environment Variables → AUTH_SECRET → redeploy.",
+          ? "Preview: add the same variables for the Preview environment in Vercel, then redeploy."
+          : "Vercel → Project → Settings → Environment Variables → save → Redeploy.",
       },
       { status: 503 },
     );

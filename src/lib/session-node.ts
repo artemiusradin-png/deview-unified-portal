@@ -5,6 +5,6 @@ export async function createUserSessionToken(userId: string, email: string, role
   if (process.env.NODE_ENV === "production" && !isProductionAuthSecretConfigured()) {
     return null;
   }
-  const secret = getAuthSecretBytes();
+  const secret = await getAuthSecretBytes();
   return signUserJwt(secret, userId, email, role);
 }

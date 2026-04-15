@@ -143,8 +143,9 @@ function LoginForm() {
           (see README). <strong className="font-medium text-slate-600 dark:text-slate-400">Demo / no DB:</strong> leave
           email empty and enter the access code (
           <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">deview-demo</code> locally, or{" "}
-          <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">PORTAL_ACCESS_CODE</code> on Vercel). Production
-          requires <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">AUTH_SECRET</code> (32+ characters).
+                   <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">PORTAL_ACCESS_CODE</code> on Vercel). With a
+          database, add <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">AUTH_SECRET</code> (32+ characters)
+          for signing; access-code-only deploys can omit it.
         </p>
       </div>
     </main>

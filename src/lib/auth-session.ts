@@ -8,7 +8,7 @@ export type ServerSession = { userId: string; email: string; role: string };
 export async function getServerSession(): Promise<ServerSession | null> {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) return null;
-  const secret = getAuthSecretBytes();
+  const secret = await getAuthSecretBytes();
   const v = await verifyUserJwt(token, secret);
   if (!v.ok) return null;
   return { userId: v.userId, email: v.email, role: v.role };
