@@ -15,9 +15,11 @@ const SUGGESTED = [
 type Props = {
   initialContext: string | null;
   customerLabel?: string;
+  /** Compact layout for dashboard embed; omits page chrome. */
+  variant?: "page" | "embedded";
 };
 
-export function AssistantClient({ initialContext, customerLabel }: Props) {
+export function AssistantClient({ initialContext, customerLabel, variant = "page" }: Props) {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -63,44 +65,62 @@ export function AssistantClient({ initialContext, customerLabel }: Props) {
     [messages, loading, context],
   );
 
-  return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-4">
-      <div>
-        <Link href="/" className="text-xs font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400">
-          ← Search
-        </Link>
-        <h1 className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-50">AI assistant</h1>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-          Answers from your unified internal record when a profile is open, plus the discovery brief. Typical use: HKID /
-          company / repayment questions (per client workshop).
-        </p>
-        {customerLabel ? (
-          <p className="mt-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
-            Context: <span className="font-medium">{customerLabel}</span> — replies use this record only.
-          </p>
-        ) : (
-          <p className="mt-2 text-xs text-slate-500">
-            Open the assistant from a customer profile to attach record JSON, or ask general questions about how the portal
-            is meant to work.
-          </p>
-        )}
-      </div>
+  const embedded = variant === "embedded";
 
-      <div className="flex flex-wrap gap-2">
+  return (
+    <div className={embedded ? "flex w-full flex-col gap-3" : "mx-auto flex max-w-2xl flex-col gap-4"}>
+      {!embedded ? (
+        <div>
+          <Link href="/" className="text-xs font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400">
+            ← Search
+          </Link>
+          <h1 className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-50">AI assistant</h1>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            Answers from your unified internal record when a profile is open, plus the discovery brief. Typical use: HKID /
+            company / repayment questions (per client workshop).
+          </p>
+          {customerLabel ? (
+            <p className="mt-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
+              Context: <span className="font-medium">{customerLabel}</span> — replies use this record only.
+            </p>
+          ) : (
+            <p className="mt-2 text-xs text-slate-500">
+              Open the assistant from a customer profile to attach record JSON, or ask general questions about how the portal
+              is meant to work.
+            </p>
+          )}
+        </div>
+      ) : customerLabel ? (
+        <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
+          Context: <span className="font-medium">{customerLabel}</span> — replies use this record only.
+        </p>
+      ) : null}
+
+      <div className={`flex flex-wrap gap-2 ${embedded ? "gap-1.5" : ""}`}>
         {SUGGESTED.map((s) => (
           <button
             key={s}
             type="button"
             onClick={() => send(s)}
             disabled={loading}
-            className="rounded-full border border-slate-200 bg-white px-3 py-1 text-left text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+            className={
+              embedded
+                ? "rounded-full border border-slate-200/90 bg-white/90 px-2.5 py-1 text-left text-[11px] leading-snug text-slate-700 hover:bg-white disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800/80 dark:text-slate-200 dark:hover:bg-slate-800 sm:text-xs"
+                : "rounded-full border border-slate-200 bg-white px-3 py-1 text-left text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+            }
           >
             {s}
           </button>
         ))}
       </div>
 
-      <div className="min-h-[280px] space-y-3 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+      <div
+        className={
+          embedded
+            ? "min-h-[220px] space-y-3 rounded-lg border border-slate-200/90 bg-white/90 p-3 dark:border-slate-700 dark:bg-slate-900/90 sm:min-h-[260px] sm:p-4"
+            : "min-h-[280px] space-y-3 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
+        }
+      >
         {messages.length === 0 ? (
           <p className="text-sm text-slate-500">Ask a question or tap a suggested prompt.</p>
         ) : (

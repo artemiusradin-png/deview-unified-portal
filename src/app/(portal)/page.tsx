@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { CustomerSnapshotTable } from "@/components/CustomerSnapshotTable";
+import { DashboardSearchWithAssistant } from "@/components/DashboardSearchWithAssistant";
 import { writeAudit } from "@/lib/audit";
 import { getServerSession } from "@/lib/auth-session";
 import { listAllCustomers } from "@/lib/portal-data";
@@ -31,12 +32,12 @@ export default async function SearchHomePage() {
             workshop.
           </p>
           <p className="mt-2 text-[13px] text-slate-600 sm:mt-3 sm:text-sm dark:text-slate-400">
-            Use the{" "}
+            Use the <strong className="font-medium text-slate-800 dark:text-slate-200">AI assistant</strong> beside global
+            search below, or open the{" "}
             <Link href="/assistant" className="font-medium text-slate-900 underline-offset-2 hover:underline dark:text-slate-100">
-              AI assistant
-            </Link>{" "}
-            for natural-language questions on a borrower record (e.g. which unit holds the facility, repayment status) —
-            grounded on the open profile when you launch it from a customer page.
+              dedicated tab
+            </Link>
+            . Borrower-specific answers are grounded when you start the assistant from a customer profile.
           </p>
         </div>
         <aside className="rounded-xl border border-slate-200 bg-white p-3 text-[13px] shadow-sm sm:p-4 sm:text-sm dark:border-slate-800 dark:bg-slate-900">
@@ -54,22 +55,7 @@ export default async function SearchHomePage() {
       <div className="mt-0 pt-1">
         <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">Global search</h2>
         <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">HKID / ID, phone number, or name (sample data).</p>
-        <form action="/results" method="get" className="mt-3 flex flex-col gap-2 sm:mt-4 sm:flex-row sm:gap-3">
-          <input
-            name="q"
-            type="search"
-            enterKeyHint="search"
-            autoComplete="off"
-            placeholder="HKID, phone, or name"
-            className="min-h-[48px] w-full min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none ring-slate-400 focus:ring-2 sm:max-w-xl sm:py-2.5 sm:text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-          />
-          <button
-            type="submit"
-            className="min-h-[48px] shrink-0 rounded-lg bg-slate-900 px-5 py-3 text-sm font-medium text-white hover:bg-slate-800 sm:min-h-0 sm:py-2.5 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
-          >
-            Search
-          </button>
-        </form>
+        <DashboardSearchWithAssistant />
         <p className="mt-2 text-xs leading-relaxed text-slate-500 sm:mt-3">
           Sample: <Link href="/results?q=Tan">Tan</Link>, <Link href="/results?q=S1234567A">S1234567A</Link>,{" "}
           <Link href="/results?q=blacklist">blacklist</Link>.
