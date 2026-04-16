@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import type { CustomerProfile } from "@/types/customer";
+import { RiskAnalysisCard } from "@/components/RiskAnalysisCard";
 import { AiSummaryPanel } from "@/components/AiSummaryPanel";
 import { maskContactDisplay, maskPhoneDisplay } from "@/lib/mask-phone";
 
@@ -66,6 +67,8 @@ export function ProfileModules({ profile }: { profile: CustomerProfile }) {
           </div>
         </div>
       </div>
+
+      <RiskAnalysisCard profile={profile} />
 
       <AiSummaryPanel customerId={profile.id} />
 

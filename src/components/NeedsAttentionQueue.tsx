@@ -1,0 +1,82 @@
+import Link from "next/link";
+import type { SearchResultRow } from "@/types/customer";
+
+type FlagLevel = "Written Off" | "High Risk" | "Watch";
+
+function flagLevel(row: SearchResultRow): FlagLevel | null {
+  if (row.blacklistFlag) return "High Risk";
+  const s = row.status.toLowerCase();
+  if (s.includes("write") || s.includes("written")) return "Written Off";
+  if (
+    s.includes("special mention") ||
+    s.includes("watch") ||
+    s.includes("npl") ||
+    s.includes("restructur") ||
+    s.includes("recovery")
+  )
+    return "Watch";
+  return null;
+}
+
+function levelBadge(level: FlagLevel) {
+  if (level === "Written Off")
+    return "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300";
+  if (level === "High Risk")
+    return "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300";
+  return "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300";
+}
+
+function reasonSnippet(row: SearchResultRow, level: FlagLevel): string {
+  if (row.blacklistFlag) return "Internal blacklist flag active";
+  if (level === "Written Off") return `Status: ${row.status}`;
+  return `Status: ${row.status}`;
+}
+
+type Props = { rows: SearchResultRow[] };
+
+export function NeedsAttentionQueue({ rows }: Props) {
+  const flagged = rows
+    .map((r) => ({ row: r, level: flagLevel(r) }))
+    .filter((x): x is { row: SearchResultRow; level: FlagLevel } => x.level !== null);
+
+  if (flagged.length === 0) return null;
+
+  return (
+    <section className="mt-5 space-y-2 sm:mt-6" aria-label="Needs attention">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">
+          Needs attention
+          <span className="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-[11px] font-medium text-red-700 dark:bg-red-900/40 dark:text-red-300">
+            {flagged.length}
+          </span>
+        </h2>
+        <p className="text-[11px] text-slate-500 sm:text-xs">Blacklisted, written-off, or watch-list borrowers.</p>
+      </div>
+      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        {flagged.map(({ row, level }) => (
+          <Link
+            key={row.id}
+            href={`/profile/${row.id}`}
+            className="group flex flex-col gap-1.5 rounded-lg border border-slate-200 bg-white p-3 transition-shadow hover:shadow-md dark:border-slate-700 dark:bg-slate-900"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium text-slate-900 group-hover:underline dark:text-slate-50">
+                  {row.name}
+                </p>
+                <p className="font-mono text-xs text-slate-500">{row.idNumber}</p>
+              </div>
+              <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${levelBadge(level)}`}>
+                {level}
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-500">{reasonSnippet(row, level)}</p>
+            <p className="text-[11px] text-slate-400">
+              {row.loanType} · {row.companyUnit}
+            </p>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}

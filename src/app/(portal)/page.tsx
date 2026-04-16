@@ -2,6 +2,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { CustomerSnapshotTable } from "@/components/CustomerSnapshotTable";
 import { DashboardSearchWithAssistant } from "@/components/DashboardSearchWithAssistant";
+import { NeedsAttentionQueue } from "@/components/NeedsAttentionQueue";
 import { writeAudit } from "@/lib/audit";
 import { getServerSession } from "@/lib/auth-session";
 import { listAllCustomers } from "@/lib/portal-data";
@@ -60,6 +61,8 @@ export default async function SearchHomePage() {
           Sample: <Link href="/results?q=Tan">Tan</Link>, <Link href="/results?q=S1234567A">S1234567A</Link>,{" "}
           <Link href="/results?q=blacklist">blacklist</Link>.
         </p>
+
+        <NeedsAttentionQueue rows={allRows} />
 
         <section className="mt-5 space-y-2 sm:mt-6" aria-label="All clients">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
