@@ -13,41 +13,32 @@ export function CustomerSnapshotTable({ rows, emptyMessage }: Props) {
     <>
       <div className="md:hidden">
         {rows.length === 0 ? (
-          <p className="rounded-lg border border-slate-200 bg-white py-8 text-center text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-900">
-            {emptyMessage}
-          </p>
+          <p className="py-6 text-center text-sm text-slate-500">{emptyMessage}</p>
         ) : (
-          <ul className="space-y-2">
+          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {rows.map((row) => (
               <li key={row.id}>
                 <Link
                   href={`/profile/${row.id}`}
-                  className="block rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm active:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:active:bg-slate-800/80"
+                  className="flex items-center justify-between gap-3 py-2.5 active:bg-slate-50 dark:active:bg-slate-800/40"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="text-sm font-semibold leading-snug text-slate-900 dark:text-slate-50">{row.name}</span>
-                    <span
-                      className={`max-w-[40%] shrink-0 truncate rounded px-1.5 py-0.5 text-[10px] font-medium dark:text-slate-300 ${
-                        row.blacklistFlag
-                          ? "bg-red-100 text-red-800 dark:bg-red-950/50 dark:text-red-200"
-                          : "bg-slate-100 text-slate-600 dark:bg-slate-800"
-                      }`}
-                      title={row.status}
-                    >
-                      {row.blacklistFlag ? "Blacklist" : row.status}
-                    </span>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-50">{row.name}</p>
+                    <p className="font-mono text-xs text-slate-500 dark:text-slate-400">
+                      {row.idNumber}
+                      <span className="mx-1.5 text-slate-300 dark:text-slate-600">·</span>
+                      {row.companyUnit}
+                    </p>
                   </div>
-                  <p className="mt-1 font-mono text-xs text-slate-600 dark:text-slate-400">{row.idNumber}</p>
-                  <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-600 dark:text-slate-400">
-                    <span>{maskPhoneDisplay(row.mobile)}</span>
-                    <span className="text-slate-400">·</span>
-                    <span>{row.companyUnit}</span>
-                  </div>
-                  <div className="mt-1.5 text-[11px] text-slate-500 dark:text-slate-500">
-                    <span className="font-mono">{row.loanNumber}</span>
-                    <span className="mx-1.5 text-slate-300 dark:text-slate-600">·</span>
-                    <span>{row.loanType}</span>
-                  </div>
+                  <span
+                    className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium ${
+                      row.blacklistFlag
+                        ? "bg-red-100 text-red-800 dark:bg-red-950/50 dark:text-red-200"
+                        : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                    }`}
+                  >
+                    {row.blacklistFlag ? "Blacklist" : row.status}
+                  </span>
                 </Link>
               </li>
             ))}
