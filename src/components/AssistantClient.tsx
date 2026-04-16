@@ -3,13 +3,30 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
-type Msg = { role: "user" | "assistant"; content: string };
+type Msg = {
+  role: "user" | "assistant";
+  content: string;
+  structured?: StructuredCard | null;
+};
+
+type StructuredCard = {
+  heading: string;
+  overallStatus: string;
+  recommendation: string;
+  confidence: string;
+  bullets: string[];
+  nextActions: string[];
+  reviewNote: string;
+  sources: string[];
+};
 
 const SUGGESTED = [
-  "Is this HKID in our database, and which company or unit holds the borrowing?",
-  "Summarize repayment history and current borrowing status.",
-  "What approval stages and conditions appear on file?",
-  "Any OCA or write-off items I should know about?",
+  "Credit risk analysis",
+  "Summarize repayment history and current status",
+  "Missing documents checklist",
+  "OCA / write-off exposure",
+  "Approval blockers",
+  "Recommended next actions",
 ];
 
 type Props = {
@@ -18,6 +35,81 @@ type Props = {
   /** Compact layout for dashboard embed; omits page chrome. */
   variant?: "page" | "embedded";
 };
+
+function statusBadgeClass(status: string) {
+  const s = status.toLowerCase();
+  if (s.includes("written off") || s.includes("high")) {
+    return "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300";
+  }
+  if (s.includes("moderate")) {
+    return "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300";
+  }
+  return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300";
+}
+
+function StructuredCardView({ card }: { card: StructuredCard }) {
+  return (
+    <div className="mt-1 space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm dark:border-slate-700 dark:bg-slate-800/60">
+      {/* Header row */}
+      <div className="flex items-start justify-between gap-2">
+        <strong className="text-slate-900 dark:text-slate-50">{card.heading}</strong>
+        <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeClass(card.overallStatus)}`}>
+          {card.overallStatus}
+        </span>
+      </div>
+
+      {/* Recommendation + confidence */}
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Recommendation</p>
+          <p className="mt-0.5 font-medium text-slate-800 dark:text-slate-200">{card.recommendation}</p>
+        </div>
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Confidence</p>
+          <p className="mt-0.5 font-medium text-slate-800 dark:text-slate-200">{card.confidence}</p>
+        </div>
+      </div>
+
+      {/* Bullets */}
+      {card.bullets.length > 0 && (
+        <ul className="space-y-1 border-t border-slate-200 pt-2 dark:border-slate-700">
+          {card.bullets.map((b, i) => (
+            <li key={i} className="flex gap-2 text-slate-700 dark:text-slate-300">
+              <span className="mt-px text-slate-400">•</span>
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Next actions */}
+      {card.nextActions.length > 0 && (
+        <div className="rounded-md border border-amber-200 bg-amber-50 p-2 dark:border-amber-800 dark:bg-amber-950/30">
+          <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">
+            Recommended next actions
+          </p>
+          <ol className="space-y-0.5 pl-1">
+            {card.nextActions.map((a, i) => (
+              <li key={i} className="text-xs text-amber-900 dark:text-amber-200">
+                {i + 1}. {a}
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+
+      {/* Review note + sources */}
+      <div className="space-y-1 border-t border-slate-200 pt-2 dark:border-slate-700">
+        <p className="text-xs italic text-slate-500 dark:text-slate-400">{card.reviewNote}</p>
+        {card.sources.length > 0 && (
+          <p className="text-[10px] text-slate-400">
+            Sources: {card.sources.join(", ")}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function AssistantClient({ initialContext, customerLabel, variant = "page" }: Props) {
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -46,16 +138,23 @@ export function AssistantClient({ initialContext, customerLabel, variant = "page
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            messages: next,
+            messages: next.map((m) => ({ role: m.role, content: m.content })),
             context: context || undefined,
           }),
         });
-        const data = await res.json();
+        const data = await res.json() as { reply?: string; structured?: StructuredCard; error?: string };
         if (!res.ok) {
           setError(typeof data.error === "string" ? data.error : "Request failed");
           return;
         }
-        setMessages([...next, { role: "assistant", content: data.reply as string }]);
+        setMessages([
+          ...next,
+          {
+            role: "assistant",
+            content: data.reply ?? "",
+            structured: data.structured ?? null,
+          },
+        ]);
       } catch {
         setError("Network error");
       } finally {
@@ -96,6 +195,7 @@ export function AssistantClient({ initialContext, customerLabel, variant = "page
         </p>
       ) : null}
 
+      {/* Prompt chips */}
       <div className={`flex flex-wrap gap-2 ${embedded ? "gap-1.5" : ""}`}>
         {SUGGESTED.map((s) => (
           <button
@@ -114,6 +214,7 @@ export function AssistantClient({ initialContext, customerLabel, variant = "page
         ))}
       </div>
 
+      {/* Message thread */}
       <div
         className={
           embedded
@@ -125,12 +226,17 @@ export function AssistantClient({ initialContext, customerLabel, variant = "page
           <p className="text-sm text-slate-500">Ask a question or tap a suggested prompt.</p>
         ) : (
           messages.map((m, i) => (
-            <div
-              key={i}
-              className={`text-sm leading-relaxed ${m.role === "user" ? "text-slate-900 dark:text-slate-100" : "text-slate-700 dark:text-slate-300"}`}
-            >
+            <div key={i} className="text-sm leading-relaxed">
               <span className="font-semibold text-slate-500">{m.role === "user" ? "You" : "Assistant"}: </span>
-              <span className="whitespace-pre-wrap">{m.content}</span>
+              {m.role === "assistant" && m.structured ? (
+                <StructuredCardView card={m.structured} />
+              ) : (
+                <span
+                  className={`whitespace-pre-wrap ${m.role === "user" ? "text-slate-900 dark:text-slate-100" : "text-slate-700 dark:text-slate-300"}`}
+                >
+                  {m.content}
+                </span>
+              )}
             </div>
           ))
         )}

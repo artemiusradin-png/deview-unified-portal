@@ -289,6 +289,11 @@ async function getPrismaProfileById(id: string): Promise<CustomerProfile | undef
   return r ? parseProfileFromRecord(r) : undefined;
 }
 
+async function getPrismaProfileByIdNumber(idNumber: string): Promise<CustomerProfile | undefined> {
+  const r = await prisma.customerRecord.findFirst({ where: { hkid: { equals: idNumber, mode: "insensitive" } } });
+  return r ? parseProfileFromRecord(r) : undefined;
+}
+
 function buildSelect() {
   return [
     "id",
@@ -421,6 +426,59 @@ export async function listAllCustomers(): Promise<SearchResultRow[]> {
     console.error("Supabase list all failed, falling back to mock.", error);
     return getAllSearchRows();
   }
+}
+
+/** Look up a profile by HKID / NRIC / ID number (case-insensitive). Uses Prisma → Supabase → mock. */
+export async function getProfileByIdNumber(idNumber: string) {
+  if (isDatabaseConfigured()) {
+    try {
+      const p = await getPrismaProfileByIdNumber(idNumber);
+      if (p) return p;
+    } catch (error) {
+      console.error("Prisma idNumber lookup failed, trying other connectors.", error);
+    }
+  }
+
+  if (!hasSupabaseConfig()) {
+    const rows = getAllSearchRows();
+    const match = rows.find((r) => r.idNumber.toLowerCase() === idNumber.toLowerCase());
+    return match ? getMockProfileById(match.id) : undefined;
+  }
+
+  try {
+    const params = new URLSearchParams();
+    params.set("select", buildSelect());
+    params.set("id_number", `ilike.${idNumber}`);
+    params.set("limit", "1");
+    const rows = await fetchSupabaseRows(params);
+    const row = rows[0];
+    return row ? parseProfile(row) : undefined;
+  } catch (error) {
+    console.error("Supabase idNumber lookup failed.", error);
+    return undefined;
+  }
+}
+
+/** Look up a profile by ID number and surface connector errors to callers that need diagnostics. */
+export async function getProfileByIdNumberStrict(idNumber: string) {
+  if (isDatabaseConfigured()) {
+    const p = await getPrismaProfileByIdNumber(idNumber);
+    if (p) return p;
+  }
+
+  if (!hasSupabaseConfig()) {
+    const rows = getAllSearchRows();
+    const match = rows.find((r) => r.idNumber.toLowerCase() === idNumber.toLowerCase());
+    return match ? getMockProfileById(match.id) : undefined;
+  }
+
+  const params = new URLSearchParams();
+  params.set("select", buildSelect());
+  params.set("id_number", `ilike.${idNumber}`);
+  params.set("limit", "1");
+  const rows = await fetchSupabaseRows(params);
+  const row = rows[0];
+  return row ? parseProfile(row) : undefined;
 }
 
 export async function getProfileById(id: string) {
