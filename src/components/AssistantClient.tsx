@@ -240,28 +240,22 @@ export function AssistantClient({ initialContext, customerLabel, variant = "page
             : "min-h-[280px] space-y-3 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
         }
       >
-        {messages.length === 0 ? (
-          <p className="text-sm text-slate-500">
-            {langText(isZh, "Ask a question or tap a suggested prompt.", "輸入問題或點選建議提示。")}
-          </p>
-        ) : (
-          messages.map((m, i) => (
-            <div key={i} className="text-sm leading-relaxed">
-              <span className="font-semibold text-slate-500">
-                {m.role === "user" ? langText(isZh, "You", "你") : langText(isZh, "Assistant", "助手")}:{" "}
+        {messages.map((m, i) => (
+          <div key={i} className="text-sm leading-relaxed">
+            <span className="font-semibold text-slate-500">
+              {m.role === "user" ? langText(isZh, "You", "你") : langText(isZh, "Assistant", "助手")}:{" "}
+            </span>
+            {m.role === "assistant" && m.structured ? (
+              <StructuredCardView card={m.structured} />
+            ) : (
+              <span
+                className={`whitespace-pre-wrap ${m.role === "user" ? "text-slate-900 dark:text-slate-100" : "text-slate-700 dark:text-slate-300"}`}
+              >
+                {m.content}
               </span>
-              {m.role === "assistant" && m.structured ? (
-                <StructuredCardView card={m.structured} />
-              ) : (
-                <span
-                  className={`whitespace-pre-wrap ${m.role === "user" ? "text-slate-900 dark:text-slate-100" : "text-slate-700 dark:text-slate-300"}`}
-                >
-                  {m.content}
-                </span>
-              )}
-            </div>
-          ))
-        )}
+            )}
+          </div>
+        ))}
         {loading ? <p className="text-xs text-slate-500">{langText(isZh, "Thinking…", "思考中…")}</p> : null}
         {error ? <p className="text-sm text-red-600 dark:text-red-400">{error}</p> : null}
         <div ref={bottomRef} />
