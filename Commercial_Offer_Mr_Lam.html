@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Commercial Offer - Mr. Lam</title>
+  <style>
+    body { font-family: Arial, sans-serif; color: #111; margin: 42px; line-height: 1.35; font-size: 10.5pt; }
+    h1 { font-size: 22pt; margin: 0 0 4px; }
+    h2 { font-size: 14pt; margin: 18px 0 8px; border-bottom: 1px solid #bbb; padding-bottom: 3px; }
+    h3 { font-size: 12pt; margin: 14px 0 4px; }
+    p { margin: 0 0 8px; }
+    ul { margin: 0 0 9px 20px; padding: 0; }
+    li { margin: 0 0 3px; }
+    table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 9pt; }
+    th, td { border: 1px solid #999; padding: 5px 6px; vertical-align: top; }
+    th { background: #f2f2f2; }
+    .center { text-align: center; }
+    .price { font-weight: 700; }
+    .lang-toggle {
+      position: fixed;
+      top: 12px;
+      right: 14px;
+      border: 0;
+      background: transparent;
+      color: #555;
+      cursor: pointer;
+      font-size: 8.5pt;
+      opacity: 0.32;
+      padding: 2px 4px;
+    }
+    .lang-toggle:hover, .lang-toggle:focus { opacity: 0.78; outline: none; }
+    [hidden] { display: none !important; }
+    @media print { .lang-toggle { display: none; } }
+  </style>
+</head>
+<body>
+  <button class="lang-toggle" type="button" aria-label="Switch language" data-lang-toggle>繁 / EN</button>
+
+  <main data-lang="en">
+  <h1>Commercial Offer</h1>
+  <p><strong>TE Credit Review & Borrower Decision Portal</strong></p>
+  <p><strong>Prepared for:</strong> Mr. Lam<br /><strong>Prepared by:</strong> DeView<br /><strong>Date:</strong> April 16, 2026</p>
+
+  <h2>1. Project Overview</h2>
+  <p>DeView proposes to build a secure internal web portal for Eden's Father that works around the client's existing TE Credit workflow. The portal will automatically refresh permitted TE Credit borrower information once per day, organize the data into a clear review interface, and support staff with AI-assisted borrower summaries and good / bad grade indicators.</p>
+  <p>TE Credit remains the credit-reference source. The DeView portal becomes the client's internal operating layer for search, review, decision support, history tracking, AI summaries, audit logs, and management visibility.</p>
+  <p>Automatic TE Credit access will be implemented through the approved method available to the client, such as API, export, or permitted automated access. All access should remain limited to authorised borrower inquiries and subject to TE Credit's terms and Hong Kong personal data requirements.</p>
+
+  <h2>2. Pricing Options</h2>
+  <h3>Option 1: TE Credit AI Portal</h3>
+  <p class="price">USD 4,000</p>
+  <p>This package includes the essential portal plus automatic daily TE Credit data refresh and AI-assisted borrower decision support.</p>
+  <ul>
+    <li>Secure internal staff login and role-based access control</li>
+    <li>Borrower search and profile page</li>
+    <li>Automatic TE Credit data refresh once per day, subject to approved access method</li>
+    <li>Storage of latest permitted TE Credit borrower data on Supabase or private server database</li>
+    <li>TE Credit review module for lending amount, period, approval / rejection, late payment, default, past transactions, bad debt write-off, interest, repayment condition, and arrears indicators where available</li>
+    <li>Last sync date/time and sync status display</li>
+    <li>AI-generated borrower summary</li>
+    <li>AI-assisted good / bad borrower grade with explanation</li>
+    <li>Basic risk labels for late payment, default, bad debt write-off, arrears, and repeated rejection history</li>
+    <li>Inquiry and access audit log, basic admin user management, and manual refresh for authorised staff</li>
+  </ul>
+  <p><strong>Business benefit:</strong> The client gets a working daily TE Credit review system from day one, with AI support for identifying good, risky, or unsuitable borrowers.</p>
+
+  <h3>Option 2: Operations Control Package</h3>
+  <p class="price">USD 6,000</p>
+  <p>This package includes everything in Option 1, plus stronger operational controls for daily lending review.</p>
+  <ul>
+    <li>Advanced search filters by borrower grade, risk status, late payment, default, write-off, approval / rejection, and last refresh date</li>
+    <li>Borrower review dashboard for recent checks and high-risk cases</li>
+    <li>Inquiry cost tracking for TE Credit checks</li>
+    <li>Export / print-ready borrower review report</li>
+    <li>Case notes for internal staff review</li>
+    <li>Document / screenshot attachment support for TE Credit evidence</li>
+    <li>Sync failure alerts for admin users</li>
+    <li>Enhanced admin permissions by role</li>
+    <li>UAT support, launch setup, and staff onboarding</li>
+  </ul>
+  <p><strong>Business benefit:</strong> This option helps management control borrower checks, review high-risk cases, and confirm that TE Credit refreshes are operating correctly.</p>
+
+  <h3>Option 3: Management Intelligence Package</h3>
+  <p class="price">USD 8,000</p>
+  <p>This package includes everything in Option 2, plus management-level reporting, enhanced AI review, and stronger decision intelligence.</p>
+  <ul>
+    <li>Management dashboard with borrower grade distribution, risk trends, and review activity</li>
+    <li>AI-assisted approval / rejection reasoning template for internal use</li>
+    <li>Borrower trend interpretation for borrowing, repayment, and arrears movement where TE Credit data supports it</li>
+    <li>Risk priority scoring for case review order</li>
+    <li>Reminder / alert module for borrowers with status changes or high-risk indicators</li>
+    <li>Team workflow notes and review status tracking</li>
+    <li>Monthly management report export</li>
+    <li>Priority post-launch optimization period after go-live</li>
+  </ul>
+  <p><strong>Business benefit:</strong> This option gives owners and managers better visibility into borrower risk, team activity, and portfolio direction.</p>
+
+  <h2>3. Feature Comparison</h2>
+  <table>
+    <tr><th>Function / Deliverable</th><th class="center">USD 4,000</th><th class="center">USD 6,000</th><th class="center">USD 8,000</th></tr>
+    <tr><td>Secure internal web portal</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>Staff login and access control</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>Borrower search and profile page</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>Daily automatic TE Credit data refresh</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>Supabase or private server data storage</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>TE Credit borrower data module</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>Last sync status and refresh timestamp</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>AI borrower summary</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>AI-assisted good / bad borrower grade</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>AI explanation of borrower grade</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>Basic risk labels and audit log</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>Manual refresh for authorised staff</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>Advanced risk and grade filters</td><td></td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>Operations dashboard</td><td></td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>TE Credit inquiry cost tracking</td><td></td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>Export / print borrower report</td><td></td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>Internal case notes and attachments</td><td></td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>Sync failure alerts and enhanced permissions</td><td></td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>UAT, launch setup, and staff onboarding</td><td></td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>Management dashboard</td><td></td><td></td><td class="center">✓</td></tr>
+    <tr><td>Borrower risk trend interpretation</td><td></td><td></td><td class="center">✓</td></tr>
+    <tr><td>AI approval / rejection reasoning template</td><td></td><td></td><td class="center">✓</td></tr>
+    <tr><td>Risk priority scoring</td><td></td><td></td><td class="center">✓</td></tr>
+    <tr><td>Reminder / alert module</td><td></td><td></td><td class="center">✓</td></tr>
+    <tr><td>Review workflow and monthly report export</td><td></td><td></td><td class="center">✓</td></tr>
+    <tr><td>Priority post-launch optimization</td><td></td><td></td><td class="center">✓</td></tr>
+  </table>
+
+  <h2>4. Recommended Positioning</h2>
+  <ul>
+    <li><strong>USD 4,000:</strong> strong launch package with daily TE Credit sync and AI borrower grading</li>
+    <li><strong>USD 6,000:</strong> best-value operations package with controls, reports, and team workflow</li>
+    <li><strong>USD 8,000:</strong> premium management package with intelligence dashboards and advanced decision support</li>
+  </ul>
+
+  <h2>5. Hosting, Server, and Maintenance</h2>
+  <p>Separate from the one-time build fee, DeView can provide private hosting infrastructure, daily sync maintenance, and technical support for:</p>
+  <p class="price">HKD 4,000 / month</p>
+  <ul>
+    <li>Personal server / cloud hosting setup</li>
+    <li>Deployment and environment management</li>
+    <li>Daily TE Credit sync monitoring</li>
+    <li>Backups, security updates, minor bug fixes, sync failure support, and basic uptime support</li>
+  </ul>
+
+  <h2>6. Compliance Note</h2>
+  <p>The portal will support automatic TE Credit data refresh only through an approved access method available to the client. DeView recommends confirming TE Credit's permitted access method and data-retention rules before final implementation. AI outputs will be used for decision support only and should not replace final human approval.</p>
+
+  <h2>7. Next Step</h2>
+  <p>Once the preferred package is confirmed, DeView can finalize the client-facing proposal with delivery timeline, implementation assumptions, payment schedule, and TE Credit access requirements.</p>
+  </main>
+
+  <main data-lang="zh-HK" hidden>
+  <h1>商業報價</h1>
+  <p><strong>TE Credit 審核及借款人決策平台</strong></p>
+  <p><strong>準備予：</strong>林先生<br /><strong>準備方：</strong>DeView<br /><strong>日期：</strong>2026年4月16日</p>
+
+  <h2>1. 項目概覽</h2>
+  <p>DeView 建議為 Eden's Father 建立一個安全嘅內部網上平台，配合客戶現有 TE Credit 工作流程。平台會每日自動更新獲准使用嘅 TE Credit 借款人資料，將資料整理成清晰嘅審核介面，並以 AI 輔助員工查看借款人摘要及好 / 壞評級指標。</p>
+  <p>TE Credit 仍然係信貸資料來源。DeView 平台會成為客戶內部營運層，用於搜尋、審核、決策支援、歷史記錄、AI 摘要、審計紀錄及管理層可視化。</p>
+  <p>自動存取 TE Credit 會透過客戶獲批准可用嘅方法實作，例如 API、匯出檔案，或獲准嘅自動化存取。所有存取都應只限於授權借款人查詢，並受 TE Credit 條款及香港個人資料要求約束。</p>
+
+  <h2>2. 價格方案</h2>
+  <h3>方案 1：TE Credit AI 平台</h3>
+  <p class="price">USD 4,000</p>
+  <p>此方案包括基本平台、每日自動 TE Credit 資料更新，以及 AI 輔助借款人決策支援。</p>
+  <ul>
+    <li>安全內部員工登入及角色權限控制</li>
+    <li>借款人搜尋及個人檔案頁面</li>
+    <li>每日一次自動 TE Credit 資料更新，視乎獲批准嘅存取方法而定</li>
+    <li>將最新獲准使用嘅 TE Credit 借款人資料儲存於 Supabase 或私人伺服器資料庫</li>
+    <li>TE Credit 審核模組，涵蓋借貸金額、期數、批核 / 拒批、遲還款、違約、過往交易、壞帳撇帳、利息、還款狀況及欠款指標（如資料可用）</li>
+    <li>顯示最後同步日期 / 時間及同步狀態</li>
+    <li>AI 生成借款人摘要</li>
+    <li>AI 輔助好 / 壞借款人評級及解釋</li>
+    <li>基本風險標籤，包括遲還款、違約、壞帳撇帳、欠款及重複拒批紀錄</li>
+    <li>查詢及存取審計紀錄、基本管理員用戶管理，以及授權員工手動更新</li>
+  </ul>
+  <p><strong>商業效益：</strong>客戶可以由第一日開始使用每日 TE Credit 審核系統，並以 AI 協助識別優質、高風險或不適合嘅借款人。</p>
+
+  <h3>方案 2：營運控制方案</h3>
+  <p class="price">USD 6,000</p>
+  <p>此方案包括方案 1 所有內容，另加強每日貸款審核所需嘅營運控制。</p>
+  <ul>
+    <li>按借款人評級、風險狀態、遲還款、違約、撇帳、批核 / 拒批及最後更新日期進行進階搜尋篩選</li>
+    <li>借款人審核儀表板，用於查看近期查詢及高風險個案</li>
+    <li>TE Credit 查詢成本追蹤</li>
+    <li>可匯出 / 可列印嘅借款人審核報告</li>
+    <li>內部員工個案備註</li>
+    <li>TE Credit 證據文件 / 截圖附件支援</li>
+    <li>同步失敗時向管理員發出提示</li>
+    <li>按角色設定更細緻嘅管理員權限</li>
+    <li>UAT 支援、上線設定及員工培訓</li>
+  </ul>
+  <p><strong>商業效益：</strong>此方案協助管理層控制借款人查詢、審核高風險個案，並確認 TE Credit 更新運作正常。</p>
+
+  <h3>方案 3：管理智能方案</h3>
+  <p class="price">USD 8,000</p>
+  <p>此方案包括方案 2 所有內容，另加管理層報表、加強 AI 審核及更強嘅決策智能。</p>
+  <ul>
+    <li>管理層儀表板，顯示借款人評級分佈、風險趨勢及審核活動</li>
+    <li>AI 輔助批核 / 拒批理由模板，供內部使用</li>
+    <li>在 TE Credit 資料支援下，解讀借款、還款及欠款變化趨勢</li>
+    <li>風險優先次序評分，用於安排個案審核次序</li>
+    <li>針對狀態變更或高風險指標借款人嘅提醒 / 警示模組</li>
+    <li>團隊工作流程備註及審核狀態追蹤</li>
+    <li>每月管理報告匯出</li>
+    <li>上線後優先優化期</li>
+  </ul>
+  <p><strong>商業效益：</strong>此方案令東主及管理層更清楚掌握借款人風險、團隊活動及整體組合方向。</p>
+
+  <h2>3. 功能比較</h2>
+  <table>
+    <tr><th>功能 / 交付項目</th><th class="center">USD 4,000</th><th class="center">USD 6,000</th><th class="center">USD 8,000</th></tr>
+    <tr><td>安全內部網上平台</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>員工登入及權限控制</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>借款人搜尋及個人檔案頁面</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>每日自動 TE Credit 資料更新</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>Supabase 或私人伺服器資料儲存</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>TE Credit 借款人資料模組</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>最後同步狀態及更新時間</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>AI 借款人摘要</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>AI 輔助好 / 壞借款人評級</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>AI 解釋借款人評級</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>基本風險標籤及審計紀錄</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>授權員工手動更新</td><td class="center">✓</td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>進階風險及評級篩選</td><td></td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>營運儀表板</td><td></td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>TE Credit 查詢成本追蹤</td><td></td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>匯出 / 列印借款人報告</td><td></td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>內部個案備註及附件</td><td></td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>同步失敗提示及加強權限</td><td></td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>UAT、上線設定及員工培訓</td><td></td><td class="center">✓</td><td class="center">✓</td></tr>
+    <tr><td>管理層儀表板</td><td></td><td></td><td class="center">✓</td></tr>
+    <tr><td>借款人風險趨勢解讀</td><td></td><td></td><td class="center">✓</td></tr>
+    <tr><td>AI 批核 / 拒批理由模板</td><td></td><td></td><td class="center">✓</td></tr>
+    <tr><td>風險優先次序評分</td><td></td><td></td><td class="center">✓</td></tr>
+    <tr><td>提醒 / 警示模組</td><td></td><td></td><td class="center">✓</td></tr>
+    <tr><td>審核工作流程及每月報告匯出</td><td></td><td></td><td class="center">✓</td></tr>
+    <tr><td>優先上線後優化</td><td></td><td></td><td class="center">✓</td></tr>
+  </table>
+
+  <h2>4. 建議定位</h2>
+  <ul>
+    <li><strong>USD 4,000：</strong>強而實用嘅啟動方案，包含每日 TE Credit 同步及 AI 借款人評級</li>
+    <li><strong>USD 6,000：</strong>最具性價比嘅營運方案，包含控制、報告及團隊流程</li>
+    <li><strong>USD 8,000：</strong>高階管理方案，包含智能儀表板及進階決策支援</li>
+  </ul>
+
+  <h2>5. 託管、伺服器及維護</h2>
+  <p>除一次性建置費用外，DeView 可提供私人託管基礎設施、每日同步維護及技術支援：</p>
+  <p class="price">HKD 4,000 / 月</p>
+  <ul>
+    <li>私人伺服器 / 雲端託管設定</li>
+    <li>部署及環境管理</li>
+    <li>每日 TE Credit 同步監察</li>
+    <li>備份、安全更新、小型錯誤修正、同步失敗支援及基本在線支援</li>
+  </ul>
+
+  <h2>6. 合規備註</h2>
+  <p>平台只會透過客戶獲批准可用嘅存取方法支援自動 TE Credit 資料更新。DeView 建議在最終實作前，先確認 TE Credit 允許嘅存取方法及資料保留規則。AI 輸出只作決策支援，不應取代最終人工批核。</p>
+
+  <h2>7. 下一步</h2>
+  <p>確認首選方案後，DeView 可以完成面向客戶嘅正式建議書，包括交付時間表、實作假設、付款安排及 TE Credit 存取要求。</p>
+  </main>
+
+  <script>
+    (function () {
+      var current = localStorage.getItem("offerLang") || "en";
+      var button = document.querySelector("[data-lang-toggle]");
+      var sections = document.querySelectorAll("[data-lang]");
+
+      function setLanguage(lang) {
+        current = lang;
+        document.documentElement.lang = lang;
+        localStorage.setItem("offerLang", lang);
+        sections.forEach(function (section) {
+          section.hidden = section.getAttribute("data-lang") !== lang;
+        });
+      }
+
+      button.addEventListener("click", function () {
+        setLanguage(current === "en" ? "zh-HK" : "en");
+      });
+
+      setLanguage(current);
+    })();
+  </script>
+</body>
+</html>
