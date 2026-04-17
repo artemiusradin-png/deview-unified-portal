@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { langText, useLanguage } from "@/components/LanguageSwitcher";
 
 type StructuredCard = {
   heading: string;
@@ -25,6 +26,7 @@ function badgeClass(status: string) {
 }
 
 export function AiSummaryPanel({ customerId }: Props) {
+  const { isZh } = useLanguage();
   const [card, setCard] = useState<StructuredCard | null>(null);
   const [fallback, setFallback] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -44,10 +46,16 @@ export function AiSummaryPanel({ customerId }: Props) {
       const data = await res.json() as { structured?: StructuredCard; summary?: string; error?: string };
       if (!res.ok) {
         if (res.status === 503) {
-          setError("AI summaries are unavailable — check OPENAI_API_KEY on the server.");
+          setError(
+            langText(
+              isZh,
+              "AI summaries are unavailable — check OPENAI_API_KEY on the server.",
+              "AI 摘要暫時不可用，請檢查伺服器 OPENAI_API_KEY。",
+            ),
+          );
           return;
         }
-        setError(typeof data.error === "string" ? data.error : "Request failed");
+        setError(typeof data.error === "string" ? data.error : langText(isZh, "Request failed", "請求失敗"));
         return;
       }
       if (data.structured) {
@@ -56,7 +64,7 @@ export function AiSummaryPanel({ customerId }: Props) {
         setFallback(data.summary);
       }
     } catch {
-      setError("Network error");
+      setError(langText(isZh, "Network error", "網絡錯誤"));
     } finally {
       setLoading(false);
     }
@@ -66,9 +74,15 @@ export function AiSummaryPanel({ customerId }: Props) {
     <section className="rounded-lg border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-900/40">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">AI case analysis</h2>
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+            {langText(isZh, "AI case analysis", "AI 個案分析")}
+          </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            LLM analysis grounded on this record — risk, repayment, approvals, OCA.
+            {langText(
+              isZh,
+              "LLM analysis grounded on this record — risk, repayment, approvals, OCA.",
+              "以此紀錄為依據嘅 LLM 分析，包括風險、還款、批核及 OCA。",
+            )}
           </p>
         </div>
         <button
@@ -77,7 +91,11 @@ export function AiSummaryPanel({ customerId }: Props) {
           disabled={loading}
           className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-800 disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
         >
-          {loading ? "Analysing…" : card ? "Refresh" : "Generate AI analysis"}
+          {loading
+            ? langText(isZh, "Analysing…", "分析中…")
+            : card
+              ? langText(isZh, "Refresh", "重新整理")
+              : langText(isZh, "Generate AI analysis", "生成 AI 分析")}
         </button>
       </div>
 
@@ -97,11 +115,15 @@ export function AiSummaryPanel({ customerId }: Props) {
           {/* Recommendation + confidence */}
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div>
-              <p className="font-semibold uppercase tracking-wide text-slate-400" style={{ fontSize: "10px" }}>Recommendation</p>
+              <p className="font-semibold uppercase tracking-wide text-slate-400" style={{ fontSize: "10px" }}>
+                {langText(isZh, "Recommendation", "建議")}
+              </p>
               <p className="mt-0.5 font-medium text-slate-800 dark:text-slate-200">{card.recommendation}</p>
             </div>
             <div>
-              <p className="font-semibold uppercase tracking-wide text-slate-400" style={{ fontSize: "10px" }}>Confidence</p>
+              <p className="font-semibold uppercase tracking-wide text-slate-400" style={{ fontSize: "10px" }}>
+                {langText(isZh, "Confidence", "信心度")}
+              </p>
               <p className="mt-0.5 font-medium text-slate-800 dark:text-slate-200">{card.confidence}</p>
             </div>
           </div>
@@ -122,7 +144,7 @@ export function AiSummaryPanel({ customerId }: Props) {
           {card.nextActions.length > 0 && (
             <div className="rounded-md border border-amber-200 bg-amber-50 p-2 dark:border-amber-800 dark:bg-amber-950/30">
               <p className="mb-1 font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400" style={{ fontSize: "10px" }}>
-                Recommended next actions
+                {langText(isZh, "Recommended next actions", "建議下一步")}
               </p>
               <ol className="space-y-0.5">
                 {card.nextActions.map((a, i) => (
@@ -139,7 +161,7 @@ export function AiSummaryPanel({ customerId }: Props) {
             <p className="text-xs italic text-slate-500">{card.reviewNote}</p>
             {card.sources.length > 0 && (
               <p className="mt-0.5 text-slate-400" style={{ fontSize: "10px" }}>
-                Sources: {card.sources.join(", ")}
+                {langText(isZh, "Sources", "來源")}: {card.sources.join(", ")}
               </p>
             )}
           </div>

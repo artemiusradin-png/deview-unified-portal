@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { LogoutButton } from "@/components/LogoutButton";
 import { getServerSession } from "@/lib/auth-session";
 import { isAdminRole } from "@/lib/rbac";
@@ -14,62 +15,80 @@ export default async function PortalLayout({ children }: { children: React.React
       <aside className="hidden w-52 shrink-0 border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 md:flex md:flex-col">
         <div className="border-b border-slate-200 px-4 py-4 dark:border-slate-800">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">DeView</p>
-          <p className="text-sm font-semibold leading-tight">Data Portal</p>
+          <p className="text-sm font-semibold leading-tight">
+            <span className="lang-en">Data Portal</span>
+            <span className="lang-zh">數據平台</span>
+          </p>
         </div>
         <nav className="flex flex-1 flex-col gap-1 p-3 text-sm">
           <Link
             href="/"
             className="rounded-md px-2 py-1.5 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
           >
-            Dashboard
+            <span className="lang-en">Dashboard</span>
+            <span className="lang-zh">儀表板</span>
           </Link>
           <Link
             href="/results?q="
             className="rounded-md px-2 py-1.5 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
           >
-            Last results
+            <span className="lang-en">Last results</span>
+            <span className="lang-zh">最近結果</span>
           </Link>
           <Link
             href="/assistant"
             className="rounded-md px-2 py-1.5 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
           >
-            AI assistant
+            <span className="lang-en">AI assistant</span>
+            <span className="lang-zh">AI 助手</span>
           </Link>
           {session && isAdminRole(session.role) ? (
             <Link
               href="/admin"
               className="rounded-md px-2 py-1.5 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
             >
-              Admin
+              <span className="lang-en">Admin</span>
+              <span className="lang-zh">管理</span>
             </Link>
           ) : null}
         </nav>
-        <div className="border-t border-slate-200 p-3 dark:border-slate-800">
+        <div className="space-y-3 border-t border-slate-200 p-3 dark:border-slate-800">
+          <LanguageSwitcher />
           <LogoutButton />
         </div>
       </aside>
       <div className="flex min-h-full min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95 md:hidden">
           <div className="flex items-center justify-between gap-2 px-3 py-2 pt-[max(0.5rem,env(safe-area-inset-top))]">
-            <span className="truncate text-sm font-semibold text-slate-900 dark:text-slate-50">Data Portal</span>
-            <LogoutButton compact />
+            <span className="truncate text-sm font-semibold text-slate-900 dark:text-slate-50">
+              <span className="lang-en">Data Portal</span>
+              <span className="lang-zh">數據平台</span>
+            </span>
+            <div className="flex shrink-0 items-center gap-2">
+              <LanguageSwitcher />
+              <LogoutButton compact />
+            </div>
           </div>
           <nav
             className="flex gap-1 overflow-x-auto border-t border-slate-100 px-2 py-1.5 dark:border-slate-800"
             aria-label="Main navigation"
           >
             <Link href="/" className={mobileNavLink}>
-              Home
+              <span className="lang-en">Home</span>
+              <span className="lang-zh">首頁</span>
             </Link>
             <Link href="/results?q=" className={mobileNavLink}>
-              Results
+              <span className="lang-en">Results</span>
+              <span className="lang-zh">結果</span>
             </Link>
             <Link href="/assistant" className={mobileNavLink}>
-              Assistant
+              <span className="lang-en">Assistant</span>
+              <span className="lang-zh">助手</span>
             </Link>
             {session && isAdminRole(session.role) ? (
               <Link href="/admin" className={mobileNavLink}>
-                Admin
+                <span className="lang-en">Admin</span>
+                <span className="lang-zh">管理</span>
               </Link>
             ) : null}
           </nav>

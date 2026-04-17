@@ -5,15 +5,23 @@ import { maskPhoneDisplay } from "@/lib/mask-phone";
 type Props = {
   rows: SearchResultRow[];
   emptyMessage: string;
+  emptyMessageZh?: string;
 };
 
 /** Card list for small screens; full table from md and up. */
-export function CustomerSnapshotTable({ rows, emptyMessage }: Props) {
+export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Props) {
+  const empty = (
+    <>
+      <span className="lang-en">{emptyMessage}</span>
+      <span className="lang-zh">{emptyMessageZh ?? emptyMessage}</span>
+    </>
+  );
+
   return (
     <>
       <div className="md:hidden">
         {rows.length === 0 ? (
-          <p className="py-6 text-center text-sm text-slate-500">{emptyMessage}</p>
+          <p className="py-6 text-center text-sm text-slate-500">{empty}</p>
         ) : (
           <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {rows.map((row) => (
@@ -37,7 +45,14 @@ export function CustomerSnapshotTable({ rows, emptyMessage }: Props) {
                         : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
                     }`}
                   >
-                    {row.blacklistFlag ? "Blacklist" : row.status}
+                    {row.blacklistFlag ? (
+                      <>
+                        <span className="lang-en">Blacklist</span>
+                        <span className="lang-zh">黑名單</span>
+                      </>
+                    ) : (
+                      row.status
+                    )}
                   </span>
                 </Link>
               </li>
@@ -54,27 +69,27 @@ export function CustomerSnapshotTable({ rows, emptyMessage }: Props) {
         <table className="min-w-[56rem] text-left text-xs">
           <thead className="border-b border-slate-200 bg-slate-50 text-[10px] font-semibold uppercase tracking-wide text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400">
             <tr>
-              <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Loan type</th>
-              <th className="px-3 py-2">Application #</th>
-              <th className="px-3 py-2">Loan #</th>
-              <th className="px-3 py-2">Apply date</th>
+              <th className="px-3 py-2"><span className="lang-en">Status</span><span className="lang-zh">狀態</span></th>
+              <th className="px-3 py-2"><span className="lang-en">Loan type</span><span className="lang-zh">貸款類型</span></th>
+              <th className="px-3 py-2"><span className="lang-en">Application #</span><span className="lang-zh">申請編號</span></th>
+              <th className="px-3 py-2"><span className="lang-en">Loan #</span><span className="lang-zh">貸款編號</span></th>
+              <th className="px-3 py-2"><span className="lang-en">Apply date</span><span className="lang-zh">申請日期</span></th>
               <th className="px-3 py-2">HKID / ID</th>
-              <th className="px-3 py-2">Name</th>
-              <th className="px-3 py-2">Age</th>
-              <th className="px-3 py-2">Job</th>
-              <th className="px-3 py-2">Mobile</th>
-              <th className="px-3 py-2">Unit</th>
-              <th className="px-3 py-2">Partaker</th>
+              <th className="px-3 py-2"><span className="lang-en">Name</span><span className="lang-zh">姓名</span></th>
+              <th className="px-3 py-2"><span className="lang-en">Age</span><span className="lang-zh">年齡</span></th>
+              <th className="px-3 py-2"><span className="lang-en">Job</span><span className="lang-zh">職業</span></th>
+              <th className="px-3 py-2"><span className="lang-en">Mobile</span><span className="lang-zh">手機</span></th>
+              <th className="px-3 py-2"><span className="lang-en">Unit</span><span className="lang-zh">單位</span></th>
+              <th className="px-3 py-2"><span className="lang-en">Partaker</span><span className="lang-zh">關係人</span></th>
               <th className="px-3 py-2">BL</th>
-              <th className="px-3 py-2">Source</th>
+              <th className="px-3 py-2"><span className="lang-en">Source</span><span className="lang-zh">來源</span></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-slate-800 dark:divide-slate-800 dark:text-slate-200">
             {rows.length === 0 ? (
               <tr>
                 <td colSpan={14} className="px-3 py-8 text-center text-sm text-slate-500">
-                  {emptyMessage}
+                  {empty}
                 </td>
               </tr>
             ) : (
@@ -103,7 +118,16 @@ export function CustomerSnapshotTable({ rows, emptyMessage }: Props) {
                   </td>
                   <td className="px-3 py-2">{row.companyUnit}</td>
                   <td className="px-3 py-2">{row.partakerType}</td>
-                  <td className="px-3 py-2">{row.blacklistFlag ? "Yes" : "—"}</td>
+                  <td className="px-3 py-2">
+                    {row.blacklistFlag ? (
+                      <>
+                        <span className="lang-en">Yes</span>
+                        <span className="lang-zh">是</span>
+                      </>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
                   <td className="px-3 py-2 text-slate-600 dark:text-slate-400">{row.sourceSystem}</td>
                 </tr>
               ))

@@ -26,7 +26,8 @@ export default async function ProfilePage({ params }: Props) {
   return (
     <div className="mx-auto max-w-6xl">
       <Link href="/" className="text-xs font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100">
-        ← Back to search
+        <span className="lang-en">← Back to search</span>
+        <span className="lang-zh">← 返回搜尋</span>
       </Link>
       <div className="mt-4">
         <ProfileModules profile={profile} />

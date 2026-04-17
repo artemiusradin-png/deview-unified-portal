@@ -1,6 +1,7 @@
 "use client";
 
 import { computeBorrowerRisk } from "@/lib/borrower-risk";
+import { langText, useLanguage } from "@/components/LanguageSwitcher";
 import type { CustomerProfile } from "@/types/customer";
 
 function badgeClass(level: string) {
@@ -18,6 +19,7 @@ function scoreBarClass(level: string) {
 }
 
 export function RiskAnalysisCard({ profile }: { profile: CustomerProfile }) {
+  const { isZh } = useLanguage();
   const risk = computeBorrowerRisk(profile);
 
   return (
@@ -25,7 +27,9 @@ export function RiskAnalysisCard({ profile }: { profile: CustomerProfile }) {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Risk Analysis</p>
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+            {langText(isZh, "Risk Analysis", "風險分析")}
+          </p>
           <h2 className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-slate-50">
             {profile.searchRow.name}
           </h2>
@@ -38,7 +42,7 @@ export function RiskAnalysisCard({ profile }: { profile: CustomerProfile }) {
       {/* Score bar */}
       <div className="mt-3">
         <div className="flex items-center justify-between text-[11px] text-slate-500">
-          <span>Risk score</span>
+          <span>{langText(isZh, "Risk score", "風險分數")}</span>
           <span className="font-medium text-slate-700 dark:text-slate-300">{risk.score} / 100</span>
         </div>
         <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
@@ -51,7 +55,9 @@ export function RiskAnalysisCard({ profile }: { profile: CustomerProfile }) {
 
       {/* Recommendation */}
       <div className="mt-3 rounded-md border border-slate-100 bg-slate-50 px-3 py-2 dark:border-slate-700 dark:bg-slate-800/60">
-        <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Recommendation</p>
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+          {langText(isZh, "Recommendation", "建議")}
+        </p>
         <p className="mt-0.5 text-sm font-medium text-slate-800 dark:text-slate-200">{risk.recommendation}</p>
       </div>
 
@@ -59,7 +65,9 @@ export function RiskAnalysisCard({ profile }: { profile: CustomerProfile }) {
         {/* Risk factors */}
         {risk.factors.length > 0 && (
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-red-500">Risk factors</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-red-500">
+              {langText(isZh, "Risk factors", "風險因素")}
+            </p>
             <ul className="mt-1 space-y-1">
               {risk.factors.map((f, i) => (
                 <li key={i} className="flex gap-1.5 text-xs text-slate-700 dark:text-slate-300">
@@ -74,7 +82,9 @@ export function RiskAnalysisCard({ profile }: { profile: CustomerProfile }) {
         {/* Strengths */}
         {risk.strengths.length > 0 && (
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-600">Strengths</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-600">
+              {langText(isZh, "Strengths", "優勢")}
+            </p>
             <ul className="mt-1 space-y-1">
               {risk.strengths.map((s, i) => (
                 <li key={i} className="flex gap-1.5 text-xs text-slate-700 dark:text-slate-300">
@@ -91,7 +101,7 @@ export function RiskAnalysisCard({ profile }: { profile: CustomerProfile }) {
       {risk.nextActions.length > 0 && (
         <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/30">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">
-            Recommended next actions
+            {langText(isZh, "Recommended next actions", "建議下一步")}
           </p>
           <ol className="mt-1.5 space-y-1">
             {risk.nextActions.map((a, i) => (

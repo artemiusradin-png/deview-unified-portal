@@ -5,28 +5,30 @@ import { useState } from "react";
 import type { CustomerProfile } from "@/types/customer";
 import { RiskAnalysisCard } from "@/components/RiskAnalysisCard";
 import { AiSummaryPanel } from "@/components/AiSummaryPanel";
+import { langText, useLanguage } from "@/components/LanguageSwitcher";
 import { maskContactDisplay, maskPhoneDisplay } from "@/lib/mask-phone";
 
 /** Client workshop labels A,B,C,F plus full lender modules. */
 const tabs = [
-  { id: "apply", label: "A · Apply info" },
-  { id: "partakers", label: "B · Partakers" },
-  { id: "credit", label: "C · Credit ref" },
-  { id: "documents", label: "Documents" },
-  { id: "mortgage", label: "Mortgage / collateral" },
-  { id: "dsr", label: "F · Income / DSR" },
-  { id: "loans", label: "Loan history" },
-  { id: "partaking", label: "Partaking history" },
-  { id: "approval", label: "Approval info" },
-  { id: "repay", label: "Repay history" },
-  { id: "repayCond", label: "Repay condition" },
-  { id: "crm", label: "CRM / remarks" },
-  { id: "oca", label: "OCA / Write-off" },
+  { id: "apply", label: "A · Apply info", labelZh: "A · 申請資料" },
+  { id: "partakers", label: "B · Partakers", labelZh: "B · 關係人" },
+  { id: "credit", label: "C · Credit ref", labelZh: "C · 信貸參考" },
+  { id: "documents", label: "Documents", labelZh: "文件" },
+  { id: "mortgage", label: "Mortgage / collateral", labelZh: "按揭 / 抵押" },
+  { id: "dsr", label: "F · Income / DSR", labelZh: "F · 收入 / DSR" },
+  { id: "loans", label: "Loan history", labelZh: "貸款紀錄" },
+  { id: "partaking", label: "Partaking history", labelZh: "參與紀錄" },
+  { id: "approval", label: "Approval info", labelZh: "批核資料" },
+  { id: "repay", label: "Repay history", labelZh: "還款紀錄" },
+  { id: "repayCond", label: "Repay condition", labelZh: "還款狀況" },
+  { id: "crm", label: "CRM / remarks", labelZh: "CRM / 備註" },
+  { id: "oca", label: "OCA / Write-off", labelZh: "OCA / 撇帳" },
 ] as const;
 
 type TabId = (typeof tabs)[number]["id"];
 
 export function ProfileModules({ profile }: { profile: CustomerProfile }) {
+  const { isZh } = useLanguage();
   const [tab, setTab] = useState<TabId>("apply");
   const row = profile.searchRow;
 
@@ -38,18 +40,19 @@ export function ProfileModules({ profile }: { profile: CustomerProfile }) {
             <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Customer360</p>
             <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-50">{row.name}</h1>
             <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-              HKID/ID <span className="font-mono text-slate-800 dark:text-slate-200">{row.idNumber}</span> · Mobile{" "}
+              HKID/ID <span className="font-mono text-slate-800 dark:text-slate-200">{row.idNumber}</span> ·{" "}
+              {langText(isZh, "Mobile", "手機")}{" "}
               <span className="font-mono">{maskPhoneDisplay(row.mobile)}</span> ·{" "}
               <span className="font-mono">{row.applicationNumber}</span>
             </p>
             <p className="mt-1 text-xs text-slate-500">
-              Age {row.age} · {row.job} · {row.companyUnit}
+              {langText(isZh, "Age", "年齡")} {row.age} · {row.job} · {row.companyUnit}
             </p>
             <Link
               href={`/assistant?customer=${profile.id}`}
               className="mt-2 inline-block text-xs font-medium text-slate-900 underline-offset-2 hover:underline dark:text-slate-100"
             >
-              Open AI assistant with this record →
+              {langText(isZh, "Open AI assistant with this record →", "用此紀錄開啟 AI 助手 →")}
             </Link>
           </div>
           <div className="flex flex-wrap gap-2 text-xs">
@@ -58,7 +61,7 @@ export function ProfileModules({ profile }: { profile: CustomerProfile }) {
             </span>
             {row.blacklistFlag ? (
               <span className="rounded-full bg-red-100 px-2 py-1 font-medium text-red-900 dark:bg-red-950 dark:text-red-200">
-                Blacklist
+                {langText(isZh, "Blacklist", "黑名單")}
               </span>
             ) : null}
             <span className="rounded-full border border-slate-200 px-2 py-1 text-slate-600 dark:border-slate-700 dark:text-slate-400">
@@ -85,7 +88,7 @@ export function ProfileModules({ profile }: { profile: CustomerProfile }) {
                   : "text-slate-700 hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800"
               }`}
             >
-              {t.label}
+              {langText(isZh, t.label, t.labelZh)}
             </button>
           ))}
         </nav>
@@ -110,30 +113,32 @@ export function ProfileModules({ profile }: { profile: CustomerProfile }) {
 }
 
 function Apply({ profile }: { profile: CustomerProfile }) {
+  const { isZh } = useLanguage();
   const a = profile.applyInfo;
   return (
     <dl className="grid gap-3 text-sm sm:grid-cols-2">
-      <Detail label="Product / loan type" value={a.product} />
-      <Detail label="Branch" value={a.branch} />
-      <Detail label="Application date" value={a.applicationDate} />
-      <Detail label="Status" value={a.status} />
-      <Detail label="Notes" value={a.applicantNote} className="sm:col-span-2" />
+      <Detail label={langText(isZh, "Product / loan type", "產品 / 貸款類型")} value={a.product} />
+      <Detail label={langText(isZh, "Branch", "分行")} value={a.branch} />
+      <Detail label={langText(isZh, "Application date", "申請日期")} value={a.applicationDate} />
+      <Detail label={langText(isZh, "Status", "狀態")} value={a.status} />
+      <Detail label={langText(isZh, "Notes", "備註")} value={a.applicantNote} className="sm:col-span-2" />
     </dl>
   );
 }
 
 function Partakers({ profile }: { profile: CustomerProfile }) {
+  const { isZh } = useLanguage();
   return (
     <ul className="space-y-3 text-sm">
       {profile.partakers.length === 0 ? (
-        <li className="text-slate-500">No related partakers on file.</li>
+        <li className="text-slate-500">{langText(isZh, "No related partakers on file.", "未有相關關係人紀錄。")}</li>
       ) : (
         profile.partakers.map((p, i) => (
           <li key={i} className="rounded-md border border-slate-100 p-3 dark:border-slate-800">
             <p className="font-medium">{p.name}</p>
             <p className="text-slate-600 dark:text-slate-400">{p.relationship}</p>
             <p className="text-xs text-slate-500">{maskContactDisplay(p.contact)}</p>
-            {p.linkedId ? <p className="mt-1 font-mono text-xs">Linked: {p.linkedId}</p> : null}
+            {p.linkedId ? <p className="mt-1 font-mono text-xs">{langText(isZh, "Linked", "連結")}: {p.linkedId}</p> : null}
           </li>
         ))
       )}
@@ -156,13 +161,14 @@ function Credit({ profile }: { profile: CustomerProfile }) {
 }
 
 function Documents({ profile }: { profile: CustomerProfile }) {
+  const { isZh } = useLanguage();
   return (
     <table className="w-full text-sm">
       <thead className="text-left text-xs uppercase text-slate-500">
         <tr>
-          <th className="pb-2">Type</th>
-          <th className="pb-2">Date</th>
-          <th className="pb-2">Reference</th>
+          <th className="pb-2">{langText(isZh, "Type", "類型")}</th>
+          <th className="pb-2">{langText(isZh, "Date", "日期")}</th>
+          <th className="pb-2">{langText(isZh, "Reference", "參考")}</th>
         </tr>
       </thead>
       <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -179,37 +185,40 @@ function Documents({ profile }: { profile: CustomerProfile }) {
 }
 
 function Mortgage({ profile }: { profile: CustomerProfile }) {
+  const { isZh } = useLanguage();
   const m = profile.mortgage;
   return (
     <dl className="grid gap-3 text-sm sm:grid-cols-2">
-      <Detail label="Applicable" value={m.applicable ? "Yes" : "No"} />
-      <Detail label="Collateral ref" value={m.collateralRef} />
-      <Detail label="Asset summary" value={m.assetSummary} className="sm:col-span-2" />
+      <Detail label={langText(isZh, "Applicable", "適用")} value={m.applicable ? langText(isZh, "Yes", "是") : langText(isZh, "No", "否")} />
+      <Detail label={langText(isZh, "Collateral ref", "抵押參考")} value={m.collateralRef} />
+      <Detail label={langText(isZh, "Asset summary", "資產摘要")} value={m.assetSummary} className="sm:col-span-2" />
     </dl>
   );
 }
 
 function Dsr({ profile }: { profile: CustomerProfile }) {
+  const { isZh } = useLanguage();
   const d = profile.dsr;
   return (
     <dl className="grid gap-3 text-sm sm:grid-cols-2">
-      <Detail label="Income" value={d.income} />
-      <Detail label="Expenditure" value={d.expenditure} />
+      <Detail label={langText(isZh, "Income", "收入")} value={d.income} />
+      <Detail label={langText(isZh, "Expenditure", "支出")} value={d.expenditure} />
       <Detail label="DSR" value={d.ratio} />
-      <Detail label="Notes" value={d.notes} className="sm:col-span-2" />
+      <Detail label={langText(isZh, "Notes", "備註")} value={d.notes} className="sm:col-span-2" />
     </dl>
   );
 }
 
 function Loans({ profile }: { profile: CustomerProfile }) {
+  const { isZh } = useLanguage();
   return (
     <table className="w-full text-sm">
       <thead className="text-left text-xs uppercase text-slate-500">
         <tr>
-          <th className="pb-2">Loan #</th>
-          <th className="pb-2">Product</th>
-          <th className="pb-2">Status</th>
-          <th className="pb-2">Period</th>
+          <th className="pb-2">{langText(isZh, "Loan #", "貸款編號")}</th>
+          <th className="pb-2">{langText(isZh, "Product", "產品")}</th>
+          <th className="pb-2">{langText(isZh, "Status", "狀態")}</th>
+          <th className="pb-2">{langText(isZh, "Period", "期間")}</th>
         </tr>
       </thead>
       <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -227,10 +236,11 @@ function Loans({ profile }: { profile: CustomerProfile }) {
 }
 
 function Partaking({ profile }: { profile: CustomerProfile }) {
+  const { isZh } = useLanguage();
   return (
     <ul className="space-y-3 text-sm">
       {profile.partakingHistory.length === 0 ? (
-        <li className="text-slate-500">No partaking history.</li>
+        <li className="text-slate-500">{langText(isZh, "No partaking history.", "未有參與紀錄。")}</li>
       ) : (
         profile.partakingHistory.map((p, i) => (
           <li key={i} className="rounded-md border border-slate-100 p-3 dark:border-slate-800">
@@ -262,14 +272,15 @@ function Approval({ profile }: { profile: CustomerProfile }) {
 }
 
 function Repay({ profile }: { profile: CustomerProfile }) {
+  const { isZh } = useLanguage();
   return (
     <table className="w-full text-sm">
       <thead className="text-left text-xs uppercase text-slate-500">
         <tr>
-          <th className="pb-2">Date</th>
-          <th className="pb-2">Amount</th>
-          <th className="pb-2">Balance after</th>
-          <th className="pb-2">Channel</th>
+          <th className="pb-2">{langText(isZh, "Date", "日期")}</th>
+          <th className="pb-2">{langText(isZh, "Amount", "金額")}</th>
+          <th className="pb-2">{langText(isZh, "Balance after", "還款後結餘")}</th>
+          <th className="pb-2">{langText(isZh, "Channel", "渠道")}</th>
         </tr>
       </thead>
       <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -287,13 +298,14 @@ function Repay({ profile }: { profile: CustomerProfile }) {
 }
 
 function RepayCond({ profile }: { profile: CustomerProfile }) {
+  const { isZh } = useLanguage();
   const r = profile.repayCondition;
   return (
     <dl className="grid gap-3 text-sm sm:grid-cols-2">
-      <Detail label="Terms" value={r.terms} className="sm:col-span-2" />
-      <Detail label="State" value={r.state} />
-      <Detail label="Overdue days" value={String(r.overdueDays)} />
-      <Detail label="Collection notes" value={r.collectionNotes} className="sm:col-span-2" />
+      <Detail label={langText(isZh, "Terms", "條款")} value={r.terms} className="sm:col-span-2" />
+      <Detail label={langText(isZh, "State", "狀態")} value={r.state} />
+      <Detail label={langText(isZh, "Overdue days", "逾期日數")} value={String(r.overdueDays)} />
+      <Detail label={langText(isZh, "Collection notes", "催收備註")} value={r.collectionNotes} className="sm:col-span-2" />
     </dl>
   );
 }
@@ -314,6 +326,7 @@ function Crm({ profile }: { profile: CustomerProfile }) {
 }
 
 function Oca({ profile }: { profile: CustomerProfile }) {
+  const { isZh } = useLanguage();
   const o = profile.ocaWriteOff;
   return (
     <div className="space-y-4 text-sm">
@@ -326,7 +339,7 @@ function Oca({ profile }: { profile: CustomerProfile }) {
         </ul>
       </div>
       <div>
-        <p className="text-xs font-semibold uppercase text-slate-500">Write-off</p>
+        <p className="text-xs font-semibold uppercase text-slate-500">{langText(isZh, "Write-off", "撇帳")}</p>
         <ul className="mt-1 list-inside list-disc text-slate-700 dark:text-slate-300">
           {o.writeOffRecords.map((x, i) => (
             <li key={i}>{x}</li>
@@ -334,7 +347,7 @@ function Oca({ profile }: { profile: CustomerProfile }) {
         </ul>
       </div>
       <p>
-        <span className="font-medium">Recovery: </span>
+        <span className="font-medium">{langText(isZh, "Recovery", "追收")}: </span>
         {o.recovery}
       </p>
     </div>
