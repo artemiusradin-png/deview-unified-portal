@@ -28,6 +28,15 @@ type TabId = (typeof tabs)[number]["id"];
 export function ProfileModules({ profile }: { profile: CustomerProfile }) {
   const { isZh } = useLanguage();
   const [tab, setTab] = useState<TabId>("apply");
+  const [completionChecks, setCompletionChecks] = useState(
+    profile.searchRow.completionChecks ?? {
+      apply: false,
+      partakers: false,
+      credit: false,
+      income: false,
+      review: false,
+    },
+  );
   const row = profile.searchRow;
 
   return (
@@ -52,6 +61,27 @@ export function ProfileModules({ profile }: { profile: CustomerProfile }) {
             <p className="mt-1 text-xs text-slate-500">
               TE Ref. Enquiry: <span className="font-mono">{row.teRefEnquiry || "N/A"}</span>
             </p>
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+              <button
+                type="button"
+                className="rounded border border-slate-300 px-2 py-1 font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+              >
+                TE Ref. Enquiry
+              </button>
+              {(["A", "B", "C", "D", "E"] as const).map((label, i) => {
+                const key = i === 0 ? "apply" : i === 1 ? "partakers" : i === 2 ? "credit" : i === 3 ? "income" : "review";
+                return (
+                  <label key={label} className="inline-flex items-center gap-1 rounded border border-slate-200 px-2 py-1 dark:border-slate-700">
+                    <span>{label}</span>
+                    <input
+                      type="checkbox"
+                      checked={Boolean(completionChecks[key as keyof typeof completionChecks])}
+                      onChange={(e) => setCompletionChecks((prev) => ({ ...prev, [key]: e.target.checked }))}
+                    />
+                  </label>
+                );
+              })}
+            </div>
             <Link
               href={`/assistant?customer=${profile.id}`}
               className="mt-2 inline-block text-xs font-medium text-slate-900 underline-offset-2 hover:underline dark:text-slate-100"
@@ -73,7 +103,7 @@ export function ProfileModules({ profile }: { profile: CustomerProfile }) {
             </span>
             {row.completionChecks ? (
               <span className="rounded-full border border-indigo-200 bg-indigo-50 px-2 py-1 text-indigo-800 dark:border-indigo-900/50 dark:bg-indigo-950/40 dark:text-indigo-200">
-                A-E {row.completionChecks.apply && row.completionChecks.partakers && row.completionChecks.credit && row.completionChecks.income && row.completionChecks.review ? "done" : "pending"}
+                A-E {completionChecks.apply && completionChecks.partakers && completionChecks.credit && completionChecks.income && completionChecks.review ? "done" : "pending"}
               </span>
             ) : null}
           </div>
@@ -98,6 +128,16 @@ export function ProfileModules({ profile }: { profile: CustomerProfile }) {
               }`}
             >
               {langText(isZh, t.label, t.labelZh)}
+              {t.id === "loans" ? (
+                <span className="ml-1 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-700 dark:bg-slate-700 dark:text-slate-100">
+                  {profile.loanHistory.length}
+                </span>
+              ) : null}
+              {t.id === "partaking" ? (
+                <span className="ml-1 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-700 dark:bg-slate-700 dark:text-slate-100">
+                  {profile.partakingHistory.length}
+                </span>
+              ) : null}
             </button>
           ))}
         </nav>
@@ -281,11 +321,16 @@ function Mortgage({ profile }: { profile: CustomerProfile }) {
   const { isZh } = useLanguage();
   const m = profile.mortgage;
   return (
-    <dl className="grid gap-3 text-sm sm:grid-cols-2">
-      <Detail label={langText(isZh, "Applicable", "適用")} value={m.applicable ? langText(isZh, "Yes", "是") : langText(isZh, "No", "否")} />
-      <Detail label={langText(isZh, "Collateral ref", "抵押參考")} value={m.collateralRef} />
-      <Detail label={langText(isZh, "Asset summary", "資產摘要")} value={m.assetSummary} className="sm:col-span-2" />
-    </dl>
+    <div className="space-y-3">
+      <dl className="grid gap-3 text-sm sm:grid-cols-2">
+        <Detail label={langText(isZh, "Applicable", "適用")} value={m.applicable ? langText(isZh, "Yes", "是") : langText(isZh, "No", "否")} />
+        <Detail label={langText(isZh, "Collateral ref", "抵押參考")} value={m.collateralRef} />
+        <Detail label={langText(isZh, "Asset summary", "資產摘要")} value={m.assetSummary} className="sm:col-span-2" />
+      </dl>
+      <button type="button" className="rounded border border-slate-300 px-2 py-1 text-xs font-medium hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-800">
+        File Created / Modified Time
+      </button>
+    </div>
   );
 }
 
@@ -352,26 +397,36 @@ function Loans({ profile }: { profile: CustomerProfile }) {
 function Partaking({ profile }: { profile: CustomerProfile }) {
   const { isZh } = useLanguage();
   return (
-    <ul className="space-y-3 text-sm">
-      {profile.partakingHistory.length === 0 ? (
-        <li className="text-slate-500">{langText(isZh, "No partaking history.", "未有參與紀錄。")}</li>
-      ) : (
-        profile.partakingHistory.map((p, i) => (
-          <li key={i} className="rounded-md border border-slate-100 p-3 dark:border-slate-800">
-            <p className="font-medium">{p.period}</p>
-            <p className="text-slate-600 dark:text-slate-400">{p.description}</p>
-            <p className="font-mono text-xs text-slate-500">{p.relatedApplication}</p>
-          </li>
-        ))
-      )}
-    </ul>
+    <div className="space-y-3">
+      <ul className="space-y-3 text-sm">
+        {profile.partakingHistory.length === 0 ? (
+          <li className="text-slate-500">{langText(isZh, "No partaking history.", "未有參與紀錄。")}</li>
+        ) : (
+          profile.partakingHistory.map((p, i) => (
+            <li key={i} className="rounded-md border border-slate-100 p-3 dark:border-slate-800">
+              <p className="font-medium">{p.period}</p>
+              <p className="text-slate-600 dark:text-slate-400">{p.description}</p>
+              <p className="font-mono text-xs text-slate-500">{p.relatedApplication}</p>
+            </li>
+          ))
+        )}
+      </ul>
+      <button type="button" className="rounded border border-slate-300 px-2 py-1 text-xs font-medium hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-800">
+        File Created / Modified Time
+      </button>
+    </div>
   );
 }
 
 function Approval({ profile }: { profile: CustomerProfile }) {
   const { isZh } = useLanguage();
+  const dsrValue = parseFloat((profile.dsr.ratio || "").replace("%", "").trim());
+  const dsrHigh = Number.isFinite(dsrValue) && dsrValue >= 80;
   return (
     <div className="space-y-3 text-sm">
+      <div className={`rounded border p-2 text-xs ${dsrHigh ? "border-red-200 bg-red-50 text-red-800 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200" : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-300"}`}>
+        DSR: {profile.dsr.ratio || "—"} {dsrHigh ? "⚠ exceeds threshold" : ""}
+      </div>
       {profile.approvalInfo.map((a, i) => (
         <div key={i} className="rounded-md border border-slate-100 p-3 dark:border-slate-800">
           <p className="font-medium">
@@ -404,8 +459,9 @@ function Approval({ profile }: { profile: CustomerProfile }) {
 function Repay({ profile }: { profile: CustomerProfile }) {
   const { isZh } = useLanguage();
   return (
-    <table className="w-full text-sm">
-      <thead className="text-left text-xs uppercase text-slate-500">
+    <div className="space-y-3">
+      <table className="w-full text-sm">
+        <thead className="text-left text-xs uppercase text-slate-500">
         <tr>
           <th className="pb-2">{langText(isZh, "Repay Date", "還款日期")}</th>
           <th className="pb-2">{langText(isZh, "Repay No.", "還款編號")}</th>
@@ -418,8 +474,8 @@ function Repay({ profile }: { profile: CustomerProfile }) {
           <th className="pb-2">{langText(isZh, "Temp. Amount", "暫收金額")}</th>
           <th className="pb-2">{langText(isZh, "Remarks", "備註")}</th>
         </tr>
-      </thead>
-      <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+        </thead>
+        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
         {profile.repayHistory.map((r, i) => (
           <tr key={i}>
             <td className="py-2 whitespace-nowrap">{r.repayDate || r.date || "—"}</td>
@@ -434,8 +490,12 @@ function Repay({ profile }: { profile: CustomerProfile }) {
             <td className="py-2">{r.remarks || r.balanceAfter || "—"}</td>
           </tr>
         ))}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+      <button type="button" className="rounded border border-slate-300 px-2 py-1 text-xs font-medium hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-800">
+        File Created / Modified Time
+      </button>
+    </div>
   );
 }
 
@@ -443,17 +503,22 @@ function RepayCond({ profile }: { profile: CustomerProfile }) {
   const { isZh } = useLanguage();
   const r = profile.repayCondition;
   return (
-    <dl className="grid gap-3 text-sm sm:grid-cols-3">
-      <Detail label={langText(isZh, "Terms", "條款")} value={r.terms || "—"} className="sm:col-span-3" />
-      <Detail label={langText(isZh, "State", "狀態")} value={r.state} />
-      <Detail label={langText(isZh, "Overdue days", "逾期日數")} value={String(r.overdueDays)} />
-      <Detail label={langText(isZh, "Next repay date", "下次還款日")} value={r.nextRepayDate || "—"} />
-      <Detail label={langText(isZh, "Next repay amount", "下次還款金額")} value={r.nextRepayAmount || "—"} />
-      <Detail label={langText(isZh, "Principal balance", "本金結餘")} value={r.principalBalance || "—"} />
-      <Detail label={langText(isZh, "Interest balance", "利息結餘")} value={r.interestBalance || "—"} />
-      <Detail label={langText(isZh, "Fee balance", "費用結餘")} value={r.feeBalance || "—"} />
-      <Detail label={langText(isZh, "Collection notes", "催收備註")} value={r.collectionNotes} className="sm:col-span-3" />
-    </dl>
+    <div className="space-y-3">
+      <dl className="grid gap-3 text-sm sm:grid-cols-3">
+        <Detail label={langText(isZh, "Terms", "條款")} value={r.terms || "—"} className="sm:col-span-3" />
+        <Detail label={langText(isZh, "State", "狀態")} value={r.state} />
+        <Detail label={langText(isZh, "Overdue days", "逾期日數")} value={String(r.overdueDays)} />
+        <Detail label={langText(isZh, "Next repay date", "下次還款日")} value={r.nextRepayDate || "—"} />
+        <Detail label={langText(isZh, "Next repay amount", "下次還款金額")} value={r.nextRepayAmount || "—"} />
+        <Detail label={langText(isZh, "Principal balance", "本金結餘")} value={r.principalBalance || "—"} />
+        <Detail label={langText(isZh, "Interest balance", "利息結餘")} value={r.interestBalance || "—"} />
+        <Detail label={langText(isZh, "Fee balance", "費用結餘")} value={r.feeBalance || "—"} />
+        <Detail label={langText(isZh, "Collection notes", "催收備註")} value={r.collectionNotes} className="sm:col-span-3" />
+      </dl>
+      <button type="button" className="rounded border border-slate-300 px-2 py-1 text-xs font-medium hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-800">
+        File Created / Modified Time
+      </button>
+    </div>
   );
 }
 

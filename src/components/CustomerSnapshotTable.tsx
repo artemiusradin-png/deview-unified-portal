@@ -12,10 +12,30 @@ type Props = {
   emptyMessageZh?: string;
 };
 
+type CompanyTag = "A" | "B" | "C" | "D" | "E";
+
+function companyTag(row: SearchResultRow): CompanyTag {
+  const text = `${row.companyUnit} ${row.sourceSystem}`.toLowerCase();
+  if (text.includes("unit a") || text.includes("company a")) return "A";
+  if (text.includes("unit b") || text.includes("company b")) return "B";
+  if (text.includes("unit c") || text.includes("company c")) return "C";
+  if (text.includes("unit d") || text.includes("company d")) return "D";
+  return "E";
+}
+
+function companyRowClass(tag: CompanyTag) {
+  if (tag === "A") return "bg-blue-50/35 dark:bg-blue-950/15";
+  if (tag === "B") return "bg-emerald-50/35 dark:bg-emerald-950/15";
+  if (tag === "C") return "bg-amber-50/35 dark:bg-amber-950/15";
+  if (tag === "D") return "bg-violet-50/35 dark:bg-violet-950/15";
+  return "bg-rose-50/35 dark:bg-rose-950/15";
+}
+
 /** Card list for small screens; full table from md and up. */
 export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Props) {
   const router = useRouter();
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const [openInline, setOpenInline] = useState<Record<string, boolean>>({});
   const grouped = useMemo(() => {
     const byBorrower = new Map<string, SearchResultRow[]>();
     for (const row of rows) {
@@ -36,6 +56,14 @@ export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Pr
 
   return (
     <>
+      <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] text-slate-600 dark:text-slate-300">
+        <span className="font-semibold text-slate-700 dark:text-slate-200">Company legend:</span>
+        {(["A", "B", "C", "D", "E"] as const).map((tag) => (
+          <span key={tag} className={`rounded border px-2 py-0.5 ${companyRowClass(tag)}`}>
+            Company {tag}
+          </span>
+        ))}
+      </div>
       <div className="md:hidden">
         {grouped.length === 0 ? (
           <p className="py-6 text-center text-sm text-slate-500">{empty}</p>
@@ -44,8 +72,9 @@ export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Pr
             {grouped.map(({ key, primary, entries }) => {
               const open = openGroups[key] ?? false;
               const hasMultiple = entries.length > 1;
+              const ctag = companyTag(primary);
               return (
-              <li key={key}>
+              <li key={key} className={`rounded ${companyRowClass(ctag)}`}>
                 <Link
                   href={`/profile/${primary.id}`}
                   className="flex items-center justify-between gap-3 py-2.5 active:bg-slate-50 dark:active:bg-slate-800/40"
@@ -80,8 +109,11 @@ export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Pr
                     <button
                       type="button"
                       onClick={() => setOpenGroups((prev) => ({ ...prev, [key]: !open }))}
-                      className="text-xs text-slate-600 underline"
+                      className="inline-flex items-center gap-1 text-xs text-slate-700 underline dark:text-slate-300"
                     >
+                      <svg className={`size-3 transition-transform ${open ? "rotate-90" : ""}`} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                        <path d="M7 4l7 6-7 6V4z" />
+                      </svg>
                       {open ? "Hide company/loan groups" : `Open toggle list (${entries.length} entries)`}
                     </button>
                     {open ? (
@@ -139,10 +171,12 @@ export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Pr
               grouped.flatMap(({ key, primary, entries }) => {
                 const hasMultiple = entries.length > 1;
                 const open = openGroups[key] ?? false;
+                const inline = openInline[key] ?? false;
+                const ctag = companyTag(primary);
                 const base = (
                   <tr
                     key={primary.id}
-                    className="cursor-pointer hover:bg-slate-50/80 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:hover:bg-slate-800/50"
+                    className={`cursor-pointer hover:bg-slate-50/80 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:hover:bg-slate-800/50 ${companyRowClass(ctag)}`}
                     role="link"
                     tabIndex={0}
                     aria-label={`Open profile for ${primary.name}`}
@@ -186,13 +220,25 @@ export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Pr
                 const toggler = hasMultiple ? (
                   <tr key={`${key}-toggle`} className="bg-slate-50/60 text-[11px] dark:bg-slate-800/30">
                     <td colSpan={14} className="px-3 py-2">
-                      <button
-                        type="button"
-                        onClick={() => setOpenGroups((prev) => ({ ...prev, [key]: !open }))}
-                        className="rounded border border-slate-300 px-2 py-0.5 text-xs hover:bg-white dark:border-slate-600 dark:hover:bg-slate-800"
-                      >
-                        {open ? "Hide grouped loans" : `Open toggle list (${entries.length} company/loan rows)`}
-                      </button>
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setOpenGroups((prev) => ({ ...prev, [key]: !open }))}
+                          className="inline-flex items-center gap-1 rounded border border-slate-300 px-2 py-0.5 text-xs hover:bg-white dark:border-slate-600 dark:hover:bg-slate-800"
+                        >
+                          <svg className={`size-3 transition-transform ${open ? "rotate-90" : ""}`} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                            <path d="M7 4l7 6-7 6V4z" />
+                          </svg>
+                          {open ? "Hide grouped loans" : `Open toggle list (${entries.length} company/loan rows)`}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setOpenInline((prev) => ({ ...prev, [key]: !inline }))}
+                          className="rounded border border-slate-300 px-2 py-0.5 text-xs hover:bg-white dark:border-slate-600 dark:hover:bg-slate-800"
+                        >
+                          {inline ? "Hide inline loan history" : "Show inline loan history"}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ) : null;
@@ -231,7 +277,58 @@ export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Pr
                         </tr>
                       ))
                     : [];
-                return [base, ...(toggler ? [toggler] : []), ...children];
+                const inlineRows =
+                  hasMultiple && inline
+                    ? [
+                        <tr key={`${key}-inline`} className="bg-white dark:bg-slate-900">
+                          <td colSpan={14} className="px-3 py-2">
+                            <div className="overflow-x-auto rounded border border-slate-200 dark:border-slate-700">
+                              <table className="min-w-full text-[11px]">
+                                <thead className="bg-slate-50 text-left text-[10px] uppercase text-slate-500 dark:bg-slate-800/50">
+                                  <tr>
+                                    <th className="px-2 py-1.5">Status</th>
+                                    <th className="px-2 py-1.5">Apply No.</th>
+                                    <th className="px-2 py-1.5">Loan No.</th>
+                                    <th className="px-2 py-1.5">Repaid / Tenor</th>
+                                    <th className="px-2 py-1.5">Loan Amount</th>
+                                    <th className="px-2 py-1.5">Instalment</th>
+                                    <th className="px-2 py-1.5">Principal Bal.</th>
+                                    <th className="px-2 py-1.5">Interest Bal.</th>
+                                    <th className="px-2 py-1.5">Next Due Date</th>
+                                    <th className="px-2 py-1.5">Detail</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                                  {entries.map((entry, idx) => (
+                                    <tr key={`${key}-inline-row-${entry.id}`}>
+                                      <td className="px-2 py-1.5">{entry.status}</td>
+                                      <td className="px-2 py-1.5 font-mono">{entry.applicationNumber}</td>
+                                      <td className="px-2 py-1.5 font-mono">{entry.loanNumber}</td>
+                                      <td className="px-2 py-1.5">{idx + 1} / {entries.length}</td>
+                                      <td className="px-2 py-1.5">—</td>
+                                      <td className="px-2 py-1.5">—</td>
+                                      <td className="px-2 py-1.5">—</td>
+                                      <td className="px-2 py-1.5">—</td>
+                                      <td className="px-2 py-1.5">{entry.applyDate}</td>
+                                      <td className="px-2 py-1.5">
+                                        <Link
+                                          href={`/profile/${entry.id}`}
+                                          className="rounded border border-slate-300 px-1.5 py-0.5 text-[10px] font-medium hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-800"
+                                          onClick={(e) => e.stopPropagation()}
+                                        >
+                                          Detail
+                                        </Link>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </td>
+                        </tr>,
+                      ]
+                    : [];
+                return [base, ...(toggler ? [toggler] : []), ...children, ...inlineRows];
               })
             )}
           </tbody>
