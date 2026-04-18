@@ -74,6 +74,22 @@ export function PortalShell({ isAdmin, children }: Props) {
               <span className="lang-en">AI assistant</span>
               <span className="lang-zh">AI 助手</span>
             </Link>
+            <Link
+              href="/email"
+              className="flex items-center justify-between rounded-md px-2 py-1.5 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-800"
+            >
+              <span className="flex items-center gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <rect width="20" height="16" x="2" y="4" rx="2" />
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg>
+                <span className="lang-en">AI Email</span>
+                <span className="lang-zh">AI 郵件</span>
+              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 shrink-0 text-amber-400" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                <path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z" clipRule="evenodd" />
+              </svg>
+            </Link>
             {isAdmin ? (
               <Link
                 href="/admin"
@@ -143,6 +159,13 @@ export function PortalShell({ isAdmin, children }: Props) {
               <span className="lang-en">Assistant</span>
               <span className="lang-zh">助手</span>
             </Link>
+            <Link href="/email" className={`${mobileNavLink} gap-1.5 text-slate-400`}>
+              <span className="lang-en">AI Email</span>
+              <span className="lang-zh">AI 郵件</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 shrink-0 text-amber-400" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                <path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z" clipRule="evenodd" />
+              </svg>
+            </Link>
             {isAdmin ? (
               <Link href="/admin" className={mobileNavLink}>
                 <span className="lang-en">Admin</span>
@@ -153,9 +176,6 @@ export function PortalShell({ isAdmin, children }: Props) {
         </header>
         <div className="flex-1 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-4 sm:py-4 md:p-8">
           {children}
-          <p className="mt-8 pb-1 text-center text-[11px] font-medium tracking-wide text-slate-400 dark:text-slate-500">
-            © Deview Consulting Co. Ltd.
-          </p>
         </div>
       </div>
     </div>
