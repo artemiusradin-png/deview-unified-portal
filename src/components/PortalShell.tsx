@@ -6,7 +6,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { LogoutButton } from "@/components/LogoutButton";
 
 const mobileNavLink =
-  "shrink-0 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 active:bg-slate-100 dark:text-slate-200 dark:active:bg-slate-800 min-h-[44px] flex items-center";
+  "shrink-0 rounded-md px-2 py-1.5 text-xs font-medium text-slate-700 active:bg-slate-100 dark:text-slate-200 dark:active:bg-slate-800 min-h-[36px] flex items-center";
 
 type Props = {
   isAdmin: boolean;
@@ -23,7 +23,7 @@ export function PortalShell({ isAdmin, children }: Props) {
         onClick={() => setSidebarHidden((v) => !v)}
         aria-label={sidebarHidden ? "Show sidebar menu" : "Hide sidebar menu"}
         className={`sidebar-toggle hidden items-center justify-center rounded-full border border-slate-300 bg-white text-slate-700 shadow-sm transition-[left,background-color,border-color] duration-300 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 md:flex ${!sidebarHidden ? "active" : ""}`}
-        style={{ left: sidebarHidden ? "0.5rem" : "12.35rem" }}
+        style={{ left: sidebarHidden ? "0.5rem" : "12rem" }}
       >
         <svg className={`ham hamRotate ham4 ${!sidebarHidden ? "active" : ""}`} viewBox="0 0 100 100" width="28" aria-hidden>
           <path className="line top" d="m 70,33 h -40 c 0,0 -8.5,-0.149796 -8.5,8.5 0,8.649796 8.5,8.5 8.5,8.5 h 20 v -20" />

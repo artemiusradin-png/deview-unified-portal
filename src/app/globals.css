@@ -62,6 +62,14 @@ html[data-lang="zh-HK"] .lang-zh.block {
   transform: rotate(45deg);
 }
 
+.sidebar-toggle .ham {
+  transform-origin: 50% 50%;
+}
+
+.sidebar-toggle.active .hamRotate.active {
+  transform: translate(0.75px, -0.75px) rotate(45deg);
+}
+
 .line {
   fill: none;
   transition: stroke-dasharray 400ms, stroke-dashoffset 400ms;
