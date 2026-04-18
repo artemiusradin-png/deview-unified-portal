@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { LogoutButton } from "@/components/LogoutButton";
 
@@ -15,6 +15,8 @@ type Props = {
 
 export function PortalShell({ isAdmin, children }: Props) {
   const [sidebarHidden, setSidebarHidden] = useState(false);
+  const [mobileHeaderHidden, setMobileHeaderHidden] = useState(false);
+  const lastScrollTopRef = useRef(0);
 
   return (
     <div className="relative flex h-screen overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -88,8 +90,33 @@ export function PortalShell({ isAdmin, children }: Props) {
           </div>
         </aside>
       ) : null}
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
-        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95 md:hidden">
+      <div
+        className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto"
+        onScroll={(event) => {
+          const currentTop = event.currentTarget.scrollTop;
+          const previousTop = lastScrollTopRef.current;
+          const delta = currentTop - previousTop;
+
+          if (Math.abs(delta) < 6) {
+            return;
+          }
+
+          if (currentTop <= 8) {
+            setMobileHeaderHidden(false);
+          } else if (delta > 0 && currentTop > 64) {
+            setMobileHeaderHidden(true);
+          } else if (delta < 0) {
+            setMobileHeaderHidden(false);
+          }
+
+          lastScrollTopRef.current = currentTop;
+        }}
+      >
+        <header
+          className={`sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur-md transition-transform duration-300 dark:border-slate-800 dark:bg-slate-900/95 md:hidden ${
+            mobileHeaderHidden ? "-translate-y-full" : "translate-y-0"
+          }`}
+        >
           <div className="flex items-center justify-between gap-2 px-3 py-2 pt-[max(0.5rem,env(safe-area-inset-top))] md:hidden">
             <span className="truncate text-sm font-semibold text-slate-900 dark:text-slate-50">
               <span className="lang-en">Data Portal</span>
@@ -126,6 +153,9 @@ export function PortalShell({ isAdmin, children }: Props) {
         </header>
         <div className="flex-1 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-4 sm:py-4 md:p-8">
           {children}
+          <p className="mt-8 pb-1 text-center text-[11px] font-medium tracking-wide text-slate-400 dark:text-slate-500">
+            © Deview Consulting Co. Ltd.
+          </p>
         </div>
       </div>
     </div>

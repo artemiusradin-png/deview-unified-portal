@@ -89,11 +89,35 @@ function SendIcon({ className }: { className?: string }) {
   );
 }
 
+function UserMark({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" aria-hidden>
+      <path
+        d="M10 10.25a3.25 3.25 0 100-6.5 3.25 3.25 0 000 6.5zM4.25 16.25a5.75 5.75 0 0111.5 0"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.7"
+      />
+    </svg>
+  );
+}
+
+function LoadingDots() {
+  return (
+    <span className="inline-flex items-center gap-1" aria-label="Loading">
+      <span className="size-1.5 rounded-full bg-slate-400" />
+      <span className="size-1.5 rounded-full bg-slate-400" />
+      <span className="size-1.5 rounded-full bg-slate-400" />
+    </span>
+  );
+}
+
 function StructuredCardView({ card }: { card: StructuredCard }) {
   const { isZh } = useLanguage();
 
   return (
-    <div className="mt-2 space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm dark:border-slate-700 dark:bg-slate-800/60">
+    <div className="mt-2 space-y-3 rounded-lg border border-slate-200 bg-white p-3 text-sm shadow-sm dark:border-slate-700 dark:bg-slate-900/70">
       {/* Header row */}
       <div className="flex items-start justify-between gap-2">
         <strong className="text-slate-900 dark:text-slate-50">{card.heading}</strong>
@@ -165,13 +189,17 @@ export function AssistantClient({ initialContext, customerLabel, variant = "page
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const threadRef = useRef<HTMLDivElement>(null);
 
   const context = initialContext ?? "";
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (!threadRef.current) return;
+    threadRef.current.scrollTo({
+      top: threadRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages, loading]);
 
   const send = useCallback(
     async (text: string) => {
@@ -298,10 +326,11 @@ export function AssistantClient({ initialContext, customerLabel, variant = "page
 
       {/* Message thread */}
       <div
+        ref={threadRef}
         className={
           embedded
-            ? "min-h-[220px] space-y-3 rounded-lg border border-slate-200/90 bg-white/90 p-3 dark:border-slate-700 dark:bg-slate-900/90 sm:min-h-[260px] sm:p-4"
-            : "min-h-[380px] space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-5"
+            ? "max-h-[48vh] min-h-[220px] space-y-3 overflow-y-auto rounded-lg border border-slate-200/90 bg-white/90 p-3 dark:border-slate-700 dark:bg-slate-900/90 sm:min-h-[260px] sm:p-4"
+            : "max-h-[56vh] min-h-[420px] space-y-5 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-950/40 sm:p-5"
         }
       >
         {!hasMessages && !loading && !error ? (
@@ -333,31 +362,60 @@ export function AssistantClient({ initialContext, customerLabel, variant = "page
             </div>
           </div>
         ) : null}
-        {messages.map((m, i) => (
-          <div key={i} className={`flex text-sm leading-relaxed ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+        {messages.map((m, i) => {
+          const fromUser = m.role === "user";
+          const structured = m.role === "assistant" && Boolean(m.structured);
+
+          return (
+          <div key={i} className={`flex gap-2 text-sm leading-relaxed ${fromUser ? "justify-end" : "justify-start"}`}>
+            {!fromUser ? (
+              <span className="mt-6 flex size-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                <AssistantMark className="size-4" />
+              </span>
+            ) : null}
             <div
-              className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 sm:max-w-[78%] ${
-                m.role === "user"
-                  ? "rounded-br-md bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                  : "rounded-bl-md border border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200"
+              className={`flex max-w-[88%] flex-col ${structured ? "sm:max-w-[92%]" : "sm:max-w-[76%]"} ${
+                fromUser ? "items-end" : "items-start"
               }`}
             >
-              <p className={`mb-1 text-[11px] font-semibold ${m.role === "user" ? "text-white/70 dark:text-slate-500" : "text-slate-500 dark:text-slate-400"}`}>
-                {m.role === "user" ? langText(isZh, "You", "你") : langText(isZh, "Assistant", "助手")}
+              <p className="mb-1.5 flex items-center gap-2 px-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                <span>{fromUser ? langText(isZh, "You", "你") : langText(isZh, "Assistant", "助手")}</span>
+                {!fromUser ? <span className="font-normal text-slate-400">{langText(isZh, "Portal AI", "平台 AI")}</span> : null}
               </p>
-              {m.role === "assistant" && m.structured ? (
-                <StructuredCardView card={m.structured} />
-              ) : (
-                <span className="whitespace-pre-wrap">{m.content}</span>
-              )}
+              <div
+                className={`rounded-2xl px-4 py-3 shadow-sm ${
+                  fromUser
+                    ? "rounded-br-md bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                    : "rounded-bl-md border border-slate-200 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                }`}
+              >
+                {m.role === "assistant" && m.structured ? (
+                  <StructuredCardView card={m.structured} />
+                ) : (
+                  <span className="whitespace-pre-wrap">{m.content}</span>
+                )}
+              </div>
             </div>
+            {fromUser ? (
+              <span className="mt-6 flex size-8 shrink-0 items-center justify-center rounded-full bg-slate-900 text-white shadow-sm dark:bg-slate-100 dark:text-slate-900">
+                <UserMark className="size-4" />
+              </span>
+            ) : null}
           </div>
-        ))}
+          );
+        })}
         {loading ? (
-          <div className="flex justify-start">
-            <div className="rounded-2xl rounded-bl-md border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-300">
-              <span className="font-medium">{langText(isZh, "Assistant", "助手")}</span>
-              <span className="ml-2 text-slate-400">{langText(isZh, "Thinking...", "思考中...")}</span>
+          <div className="flex justify-start gap-2 text-sm">
+            <span className="mt-6 flex size-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+              <AssistantMark className="size-4" />
+            </span>
+            <div className="flex max-w-[76%] flex-col items-start">
+              <p className="mb-1.5 px-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                {langText(isZh, "Assistant", "助手")}
+              </p>
+              <div className="rounded-2xl rounded-bl-md border border-slate-200 bg-white px-4 py-3 text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                <LoadingDots />
+              </div>
             </div>
           </div>
         ) : null}
@@ -366,24 +424,30 @@ export function AssistantClient({ initialContext, customerLabel, variant = "page
             {error}
           </p>
         ) : null}
-        <div ref={bottomRef} />
       </div>
 
       <form
-        className={embedded ? "flex flex-col gap-2 sm:flex-row" : "flex flex-col gap-2 rounded-lg border border-slate-200 bg-white p-2 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:flex-row"}
+        className={embedded ? "flex flex-col gap-2 sm:flex-row" : "flex flex-col gap-2 rounded-lg border border-slate-200 bg-white p-2 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:flex-row sm:items-end"}
         onSubmit={(e) => {
           e.preventDefault();
           send(input);
         }}
       >
-        <input
+        <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              send(input);
+            }
+          }}
           placeholder={langText(isZh, "Ask about this borrower or the portal…", "查詢此借款人或平台…")}
+          rows={1}
           className={
             embedded
-              ? "flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100"
-              : "min-h-[44px] flex-1 rounded-md border border-transparent bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none ring-slate-400 placeholder:text-slate-400 focus:bg-white focus:ring-2 dark:bg-slate-950 dark:text-slate-100 dark:focus:bg-slate-950"
+              ? "min-h-[42px] flex-1 resize-none rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100"
+              : "max-h-32 min-h-[44px] flex-1 resize-none rounded-md border border-transparent bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none ring-slate-400 placeholder:text-slate-400 focus:bg-white focus:ring-2 dark:bg-slate-950 dark:text-slate-100 dark:focus:bg-slate-950"
           }
         />
         <button

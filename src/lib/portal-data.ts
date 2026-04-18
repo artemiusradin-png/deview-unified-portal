@@ -81,6 +81,7 @@ function pick(record: JsonRecord, camelKey: string, snakeKey = camelKey) {
 }
 
 function parseSearchRow(row: SupabasePortalRow): SearchResultRow {
+  const applyInfo = isRecord(row.apply_info) ? row.apply_info : {};
   return {
     id: asString(row.id),
     status: asString(row.status),
@@ -97,6 +98,17 @@ function parseSearchRow(row: SupabasePortalRow): SearchResultRow {
     age: asNumber(row.age),
     job: asString(row.job),
     companyUnit: asString(row.company_unit),
+    passportNumber: asString(pick(applyInfo, "passportNumber", "passport_number")),
+    teRefEnquiry: asString(pick(applyInfo, "teRefEnquiry", "te_ref_enquiry")),
+    completionChecks: isRecord(pick(applyInfo, "completionChecks", "completion_checks"))
+      ? {
+          apply: asBoolean(pick(pick(applyInfo, "completionChecks", "completion_checks") as JsonRecord, "apply")),
+          partakers: asBoolean(pick(pick(applyInfo, "completionChecks", "completion_checks") as JsonRecord, "partakers")),
+          credit: asBoolean(pick(pick(applyInfo, "completionChecks", "completion_checks") as JsonRecord, "credit")),
+          income: asBoolean(pick(pick(applyInfo, "completionChecks", "completion_checks") as JsonRecord, "income")),
+          review: asBoolean(pick(pick(applyInfo, "completionChecks", "completion_checks") as JsonRecord, "review")),
+        }
+      : undefined,
   };
 }
 
