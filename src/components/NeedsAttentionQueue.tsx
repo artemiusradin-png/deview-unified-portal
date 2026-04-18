@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { SearchResultRow } from "@/types/customer";
+import { scoreRowHeuristic } from "@/lib/ops";
 
 type FlagLevel = "Written Off" | "High Risk" | "Watch";
 
@@ -44,12 +45,16 @@ function levelLabelZh(level: FlagLevel) {
   return "觀察";
 }
 
-type Props = { rows: SearchResultRow[] };
+type Props = {
+  rows: SearchResultRow[];
+  priorities?: Record<string, number>;
+};
 
-export function NeedsAttentionQueue({ rows }: Props) {
+export function NeedsAttentionQueue({ rows, priorities = {} }: Props) {
   const flagged = rows
-    .map((r) => ({ row: r, level: flagLevel(r) }))
-    .filter((x): x is { row: SearchResultRow; level: FlagLevel } => x.level !== null);
+    .map((r) => ({ row: r, level: flagLevel(r), score: priorities[r.id] ?? scoreRowHeuristic(r) }))
+    .filter((x): x is { row: SearchResultRow; level: FlagLevel; score: number } => x.level !== null);
+  flagged.sort((a, b) => b.score - a.score);
 
   if (flagged.length === 0) return null;
 
@@ -69,7 +74,7 @@ export function NeedsAttentionQueue({ rows }: Props) {
         </p>
       </div>
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {flagged.map(({ row, level }) => (
+        {flagged.map(({ row, level, score }) => (
           <Link
             key={row.id}
             href={`/profile/${row.id}`}
@@ -92,7 +97,7 @@ export function NeedsAttentionQueue({ rows }: Props) {
               <span className="lang-zh">{reasonSnippetZh(row, level)}</span>
             </p>
             <p className="text-[11px] text-slate-400">
-              {row.loanType} · {row.companyUnit}
+              {row.loanType} · {row.companyUnit} · score {score}
             </p>
           </Link>
         ))}

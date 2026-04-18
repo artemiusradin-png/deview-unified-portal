@@ -71,6 +71,8 @@ export default async function AdminSourcesPage() {
                 <th className="px-3 py-2">Format</th>
                 <th className="px-3 py-2">Unit</th>
                 <th className="px-3 py-2">Status</th>
+                <th className="px-3 py-2">Last result</th>
+                <th className="px-3 py-2">Sync cost</th>
                 <th className="px-3 py-2">Last sync</th>
               </tr>
             </thead>
@@ -81,6 +83,8 @@ export default async function AdminSourcesPage() {
                   <td className="px-3 py-2 text-slate-600 dark:text-slate-400">{s.format}</td>
                   <td className="px-3 py-2">{s.businessUnit ?? "—"}</td>
                   <td className="px-3 py-2">{s.status}</td>
+                  <td className="px-3 py-2">{s.lastSyncStatus ?? "—"}</td>
+                  <td className="px-3 py-2">${(s.syncCostCents / 100).toFixed(2)}</td>
                   <td className="px-3 py-2 whitespace-nowrap text-slate-600 dark:text-slate-400">
                     {s.lastSyncAt ? s.lastSyncAt.toISOString().slice(0, 19) : "—"}
                   </td>

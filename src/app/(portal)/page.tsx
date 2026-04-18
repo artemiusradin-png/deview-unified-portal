@@ -5,10 +5,28 @@ import { DashboardSearchWithAssistant } from "@/components/DashboardSearchWithAs
 import { NeedsAttentionQueue } from "@/components/NeedsAttentionQueue";
 import { writeAudit } from "@/lib/audit";
 import { getServerSession } from "@/lib/auth-session";
-import { listAllCustomers } from "@/lib/portal-data";
+import { getProfileById, listAllCustomers } from "@/lib/portal-data";
+import { computeBorrowerRisk } from "@/lib/borrower-risk";
+import { isDatabaseConfigured, prisma } from "@/lib/prisma";
+import { runDashboardRefreshAction } from "./actions";
+import { isStaffOrAbove } from "@/lib/rbac";
 
 export default async function SearchHomePage() {
   const allRows = await listAllCustomers();
+  const scored = await Promise.all(
+    allRows.map(async (row) => {
+      const profile = await getProfileById(row.id);
+      if (!profile) return [row.id, 0] as const;
+      return [row.id, computeBorrowerRisk(profile).score] as const;
+    }),
+  );
+  const priorities = Object.fromEntries(scored);
+  const syncSource = isDatabaseConfigured()
+    ? await prisma.dataSource.findFirst({
+        where: { OR: [{ name: { contains: "TE Credit", mode: "insensitive" } }, { refreshFrequency: { contains: "daily", mode: "insensitive" } }] },
+        orderBy: { updatedAt: "desc" },
+      })
+    : null;
 
   const session = await getServerSession();
   const h = await headers();
@@ -94,7 +112,32 @@ export default async function SearchHomePage() {
           <Link href="/results?q=blacklist">blacklist</Link>.
         </p>
 
-        <NeedsAttentionQueue rows={allRows} />
+        {syncSource ? (
+          <section className="mt-4 rounded-lg border border-slate-200 bg-white p-3 text-xs dark:border-slate-800 dark:bg-slate-900">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p className="font-semibold text-slate-800 dark:text-slate-100">TE Credit sync status</p>
+                <p className="text-slate-500">
+                  Last sync: {syncSource.lastSyncAt ? syncSource.lastSyncAt.toISOString().replace("T", " ").slice(0, 19) : "never"} ·
+                  status: {syncSource.lastSyncStatus ?? syncSource.status}
+                </p>
+              </div>
+              {session && isStaffOrAbove(session.role) ? (
+                <form action={runDashboardRefreshAction}>
+                  <input type="hidden" name="sourceId" value={syncSource.id} />
+                  <button
+                    type="submit"
+                    className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white dark:bg-slate-100 dark:text-slate-900"
+                  >
+                    Manual refresh
+                  </button>
+                </form>
+              ) : null}
+            </div>
+          </section>
+        ) : null}
+
+        <NeedsAttentionQueue rows={allRows} priorities={priorities} />
 
         <section className="mt-5 space-y-2 sm:mt-6" aria-label="All clients">
           <div className="flex flex-wrap items-baseline justify-between gap-2">

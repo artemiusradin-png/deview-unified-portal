@@ -16,11 +16,12 @@ export default async function AdminHomePage() {
     );
   }
 
-  const [users, sources, jobs, audits] = await Promise.all([
+  const [users, sources, jobs, audits, unreadAlerts] = await Promise.all([
     prisma.user.count(),
     prisma.dataSource.count(),
     prisma.syncJob.count(),
     prisma.auditLog.count(),
+    prisma.adminAlert.count({ where: { readAt: null } }),
   ]);
 
   return (
@@ -51,6 +52,13 @@ export default async function AdminHomePage() {
         <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-50">{audits}</p>
         <Link href="/admin/audit" className="mt-2 inline-block text-sm text-slate-600 underline dark:text-slate-400">
           Open log →
+        </Link>
+      </div>
+      <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+        <p className="text-xs font-semibold uppercase text-slate-500">Open alerts</p>
+        <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-50">{unreadAlerts}</p>
+        <Link href="/admin/management" className="mt-2 inline-block text-sm text-slate-600 underline dark:text-slate-400">
+          Management →
         </Link>
       </div>
     </div>

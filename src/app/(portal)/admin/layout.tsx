@@ -50,6 +50,12 @@ export default async function AdminSectionLayout({ children }: { children: React
           Sync jobs
         </Link>
         <Link
+          href="/admin/management"
+          className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+        >
+          Management
+        </Link>
+        <Link
           href="/"
           className="rounded-md px-3 py-1.5 text-slate-600 underline-offset-2 hover:underline dark:text-slate-400"
         >

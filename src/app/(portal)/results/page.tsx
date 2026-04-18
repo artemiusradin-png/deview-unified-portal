@@ -2,10 +2,32 @@ import { headers } from "next/headers";
 import { CustomerSnapshotTable } from "@/components/CustomerSnapshotTable";
 import { writeAudit } from "@/lib/audit";
 import { getServerSession } from "@/lib/auth-session";
-import { filterSearchRows, searchCustomers, type ResultFilters } from "@/lib/portal-data";
+import { filterSearchRows, getProfileById, searchCustomers, type ResultFilters } from "@/lib/portal-data";
+import {
+  analysisFromProfile,
+  extractApprovalDate,
+  gradeFromScore,
+  inferRowFlags,
+  riskStatusFromScore,
+  safeDate,
+  scoreRowHeuristic,
+} from "@/lib/ops";
 
 type Props = {
-  searchParams: Promise<{ q?: string; ageMin?: string; ageMax?: string; job?: string; company?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    ageMin?: string;
+    ageMax?: string;
+    job?: string;
+    company?: string;
+    grade?: string;
+    riskStatus?: string;
+    latePayment?: string;
+    defaulted?: string;
+    writeOff?: string;
+    approvalDateFrom?: string;
+    approvalDateTo?: string;
+  }>;
 };
 
 export default async function ResultsPage({ searchParams }: Props) {
@@ -19,6 +41,46 @@ export default async function ResultsPage({ searchParams }: Props) {
   };
   const raw = await searchCustomers(q);
   const rows = filterSearchRows(raw, filters);
+  const enriched = await Promise.all(
+    rows.map(async (row) => {
+      const profile = await getProfileById(row.id);
+      const analysis = profile
+        ? analysisFromProfile(profile)
+        : {
+            score: scoreRowHeuristic(row),
+            riskLevel: riskStatusFromScore(scoreRowHeuristic(row)),
+            grade: gradeFromScore(scoreRowHeuristic(row)),
+          };
+      const flags = profile
+        ? {
+            latePayment:
+              profile.repayCondition.overdueDays > 0 || profile.repayCondition.state.toLowerCase().includes("watch"),
+            defaulted:
+              profile.repayCondition.state.toLowerCase().includes("default") ||
+              profile.searchRow.status.toLowerCase().includes("npl"),
+            writeOff:
+              profile.repayCondition.state.toLowerCase().includes("write") ||
+              profile.ocaWriteOff.writeOffRecords.some((x) => !x.toLowerCase().includes("none")),
+          }
+        : inferRowFlags(row);
+      const approvalDate = profile ? extractApprovalDate(profile) : safeDate(row.applyDate);
+      return { row, analysis, flags, approvalDate };
+    }),
+  );
+
+  const fromDate = safeDate(sp.approvalDateFrom);
+  const toDate = safeDate(sp.approvalDateTo);
+  const filteredAdvanced = enriched.filter((item) => {
+    if (sp.grade && item.analysis.grade !== sp.grade) return false;
+    if (sp.riskStatus && item.analysis.riskLevel !== sp.riskStatus) return false;
+    if (sp.latePayment === "true" && !item.flags.latePayment) return false;
+    if (sp.defaulted === "true" && !item.flags.defaulted) return false;
+    if (sp.writeOff === "true" && !item.flags.writeOff) return false;
+    if (fromDate && (!item.approvalDate || item.approvalDate < fromDate)) return false;
+    if (toDate && (!item.approvalDate || item.approvalDate > toDate)) return false;
+    return true;
+  });
+  const rowsFinal = filteredAdvanced.map((x) => x.row);
 
   const session = await getServerSession();
   const h = await headers();
@@ -26,7 +88,7 @@ export default async function ResultsPage({ searchParams }: Props) {
     userId: session?.userId,
     action: "search.page",
     resource: q || "(empty)",
-    metadata: { resultCount: rows.length, filteredFrom: raw.length },
+    metadata: { resultCount: rowsFinal.length, filteredFrom: raw.length },
     ip: h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null,
     userAgent: h.get("user-agent"),
   });
@@ -43,10 +105,10 @@ export default async function ResultsPage({ searchParams }: Props) {
             <p className="text-sm text-slate-600 dark:text-slate-400">
               <span className="lang-en">Query: </span>
               <span className="lang-zh">查詢：</span>
-              <span className="font-mono text-slate-800 dark:text-slate-200">{q || "—"}</span> · {rows.length}{" "}
-              <span className="lang-en">match{rows.length === 1 ? "" : "es"}</span>
+              <span className="font-mono text-slate-800 dark:text-slate-200">{q || "—"}</span> · {rowsFinal.length}{" "}
+              <span className="lang-en">match{rowsFinal.length === 1 ? "" : "es"}</span>
               <span className="lang-zh">個結果</span>
-              {raw.length !== rows.length ? (
+              {raw.length !== rowsFinal.length ? (
                 <>
                   <span className="lang-en text-slate-500"> (filtered from {raw.length})</span>
                   <span className="lang-zh text-slate-500">（由 {raw.length} 筆篩選）</span>
@@ -61,7 +123,7 @@ export default async function ResultsPage({ searchParams }: Props) {
           <form
             action="/results"
             method="get"
-            className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-end lg:max-w-xl"
+            className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-end lg:max-w-4xl"
           >
             <input type="hidden" name="q" value={q} />
             <div className="flex flex-col gap-0.5">
@@ -121,6 +183,90 @@ export default async function ResultsPage({ searchParams }: Props) {
               <span className="lang-en">Apply filters</span>
               <span className="lang-zh">套用篩選</span>
             </button>
+            <div className="col-span-2 border-t border-slate-200 pt-2 dark:border-slate-700 sm:col-span-full">
+              <p className="mb-2 text-[10px] font-semibold uppercase text-slate-500">Advanced</p>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <label className="text-[10px] font-medium uppercase text-slate-500">
+                  Grade
+                  <select
+                    name="grade"
+                    defaultValue={sp.grade ?? ""}
+                    className="mt-1 min-h-[40px] w-full rounded border border-slate-300 bg-white px-2 text-sm dark:border-slate-600 dark:bg-slate-900"
+                  >
+                    <option value="">Any</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                  </select>
+                </label>
+                <label className="text-[10px] font-medium uppercase text-slate-500">
+                  Risk status
+                  <select
+                    name="riskStatus"
+                    defaultValue={sp.riskStatus ?? ""}
+                    className="mt-1 min-h-[40px] w-full rounded border border-slate-300 bg-white px-2 text-sm dark:border-slate-600 dark:bg-slate-900"
+                  >
+                    <option value="">Any</option>
+                    <option value="Low Risk">Low Risk</option>
+                    <option value="Moderate Risk">Moderate Risk</option>
+                    <option value="High Risk">High Risk</option>
+                    <option value="Written Off">Written Off</option>
+                  </select>
+                </label>
+                <label className="text-[10px] font-medium uppercase text-slate-500">
+                  Late payment
+                  <select
+                    name="latePayment"
+                    defaultValue={sp.latePayment ?? ""}
+                    className="mt-1 min-h-[40px] w-full rounded border border-slate-300 bg-white px-2 text-sm dark:border-slate-600 dark:bg-slate-900"
+                  >
+                    <option value="">Any</option>
+                    <option value="true">Yes</option>
+                  </select>
+                </label>
+                <label className="text-[10px] font-medium uppercase text-slate-500">
+                  Default
+                  <select
+                    name="defaulted"
+                    defaultValue={sp.defaulted ?? ""}
+                    className="mt-1 min-h-[40px] w-full rounded border border-slate-300 bg-white px-2 text-sm dark:border-slate-600 dark:bg-slate-900"
+                  >
+                    <option value="">Any</option>
+                    <option value="true">Yes</option>
+                  </select>
+                </label>
+                <label className="text-[10px] font-medium uppercase text-slate-500">
+                  Write-off
+                  <select
+                    name="writeOff"
+                    defaultValue={sp.writeOff ?? ""}
+                    className="mt-1 min-h-[40px] w-full rounded border border-slate-300 bg-white px-2 text-sm dark:border-slate-600 dark:bg-slate-900"
+                  >
+                    <option value="">Any</option>
+                    <option value="true">Yes</option>
+                  </select>
+                </label>
+                <label className="text-[10px] font-medium uppercase text-slate-500">
+                  Approval from
+                  <input
+                    type="date"
+                    name="approvalDateFrom"
+                    defaultValue={sp.approvalDateFrom}
+                    className="mt-1 min-h-[40px] w-full rounded border border-slate-300 bg-white px-2 text-sm dark:border-slate-600 dark:bg-slate-900"
+                  />
+                </label>
+                <label className="text-[10px] font-medium uppercase text-slate-500">
+                  Approval to
+                  <input
+                    type="date"
+                    name="approvalDateTo"
+                    defaultValue={sp.approvalDateTo}
+                    className="mt-1 min-h-[40px] w-full rounded border border-slate-300 bg-white px-2 text-sm dark:border-slate-600 dark:bg-slate-900"
+                  />
+                </label>
+              </div>
+            </div>
           </form>
         </div>
 
@@ -139,12 +285,23 @@ export default async function ResultsPage({ searchParams }: Props) {
             <span className="lang-en">Go</span>
             <span className="lang-zh">搜尋</span>
           </button>
+          <input type="hidden" name="ageMin" value={sp.ageMin ?? ""} />
+          <input type="hidden" name="ageMax" value={sp.ageMax ?? ""} />
+          <input type="hidden" name="job" value={sp.job ?? ""} />
+          <input type="hidden" name="company" value={sp.company ?? ""} />
+          <input type="hidden" name="grade" value={sp.grade ?? ""} />
+          <input type="hidden" name="riskStatus" value={sp.riskStatus ?? ""} />
+          <input type="hidden" name="latePayment" value={sp.latePayment ?? ""} />
+          <input type="hidden" name="defaulted" value={sp.defaulted ?? ""} />
+          <input type="hidden" name="writeOff" value={sp.writeOff ?? ""} />
+          <input type="hidden" name="approvalDateFrom" value={sp.approvalDateFrom ?? ""} />
+          <input type="hidden" name="approvalDateTo" value={sp.approvalDateTo ?? ""} />
         </form>
       </div>
 
       <div className="mt-6">
         <CustomerSnapshotTable
-          rows={rows}
+          rows={rowsFinal}
           emptyMessage={
             q ? "No records match. Try another HKID, phone fragment, name, or adjust filters." : "Enter a search on the dashboard."
           }

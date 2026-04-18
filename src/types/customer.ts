@@ -18,25 +18,93 @@ export type SearchResultRow = {
   job: string;
   /** Company / unit for scoping */
   companyUnit: string;
+  passportNumber?: string;
+  teRefEnquiry?: string;
+  completionChecks?: {
+    apply: boolean;
+    partakers: boolean;
+    credit: boolean;
+    income: boolean;
+    review: boolean;
+  };
+};
+
+export type LoanHistoryItem = {
+  status: string;
+  applyNumber?: string;
+  loanNumber: string;
+  repaidTenor?: number;
+  totalTenor?: number;
+  loanAmount?: string;
+  instalmentAmount?: string;
+  principalBalance?: string;
+  interestBalance?: string;
+  nextDueDate?: string;
+  detailNote?: string;
+  product?: string;
+  period?: string;
+};
+
+export type CreditReferenceItem = {
+  creditor: string;
+  creditType: string;
+  loanAmount: string;
+  instalmentAmount: string;
+  outstandingTenor: string;
+  balanceAmount: string;
+  debtor: string;
 };
 
 export type CustomerProfile = {
   id: string;
   searchRow: SearchResultRow;
   applyInfo: {
-    product: string;
+    loanType?: string;
+    interestMethod?: string;
+    repayCycle?: string;
+    loanAmount?: string;
+    totalTenor?: string;
+    flatRate?: string;
+    effectiveRate?: string;
+    instalmentAmount?: string;
+    maxInterest?: string;
+    totalInterest?: string;
+    applyDate?: string;
+    loanPurpose?: string;
     branch: string;
-    applicationDate: string;
+    staff?: string;
+    referralAgent?: string;
+    referralAgentAddress?: string;
+    relation?: string;
+    mainAvenue?: string;
+    mainPurpose?: string;
+    autopayBankInfo?: string;
+    personalInfo?: string;
     status: string;
-    applicantNote: string;
+    notes?: string;
+    /** legacy */
+    product?: string;
+    applicationDate?: string;
+    applicantNote?: string;
   };
   partakers: Array<{
+    partakerType?: string;
     name: string;
-    relationship: string;
-    contact: string;
+    mobileNo?: string;
+    homeNo?: string;
+    passport?: string;
+    relation?: string;
+    selected?: boolean;
+    /** legacy */
+    relationship?: string;
+    contact?: string;
     linkedId?: string;
   }>;
-  creditRef: { summary: string; indicators: string[] };
+  creditRef: {
+    summary: string;
+    indicators: string[];
+    items?: CreditReferenceItem[];
+  };
   documents: Array<{
     type: string;
     date: string;
@@ -53,12 +121,7 @@ export type CustomerProfile = {
     ratio: string;
     notes: string;
   };
-  loanHistory: Array<{
-    loanNumber: string;
-    product: string;
-    status: string;
-    period: string;
-  }>;
+  loanHistory: LoanHistoryItem[];
   partakingHistory: Array<{
     period: string;
     description: string;
@@ -66,20 +129,53 @@ export type CustomerProfile = {
   }>;
   approvalInfo: Array<{
     stage: string;
-    date: string;
-    reviewer: string;
     decision: string;
     notes: string;
+    approvalStaff?: string;
+    approvalDate?: string;
+    payoutDate?: string;
+    loanDate?: string;
+    firstDueDate?: string;
+    firstRepayAmount?: string;
+    interestMethod?: string;
+    repayCycle?: string;
+    loanAmount?: string;
+    totalTenor?: string;
+    flatRate?: string;
+    effectiveRate?: string;
+    penaltySetting?: string;
+    dsr?: string;
+    extendedInterestDay?: string;
+    extendedInterestAmount?: string;
+    /** legacy */
+    date?: string;
+    reviewer?: string;
   }>;
   repayHistory: Array<{
-    date: string;
-    amount: string;
-    balanceAfter: string;
-    channel: string;
+    repayDate?: string;
+    repayNo?: string;
+    repayType?: string;
+    tenor?: string;
+    repayAmount?: string;
+    overdueInterest?: string;
+    handlingFee?: string;
+    receivedAmount?: string;
+    tempAmount?: string;
+    remarks?: string;
+    /** legacy */
+    date?: string;
+    amount?: string;
+    balanceAfter?: string;
+    channel?: string;
   }>;
   repayCondition: {
-    terms: string;
+    terms?: string;
     state: string;
+    nextRepayDate?: string;
+    nextRepayAmount?: string;
+    principalBalance?: string;
+    interestBalance?: string;
+    feeBalance?: string;
     overdueDays: number;
     collectionNotes: string;
   };

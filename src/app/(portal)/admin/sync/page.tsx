@@ -18,10 +18,9 @@ export default async function AdminSyncPage() {
   return (
     <div className="space-y-8">
       <section className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-        <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">Queue stub sync</h2>
+        <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">Manual refresh</h2>
         <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
-          Placeholder until ETL / connector workers run. Creates a completed job row and bumps{" "}
-          <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">lastSyncAt</code>.
+          Run refresh for a specific source. Daily schedule can trigger via Vercel cron endpoint.
         </p>
         {sources.length === 0 ? (
           <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">Add a data source first.</p>
@@ -37,8 +36,19 @@ export default async function AdminSyncPage() {
                 ))}
               </select>
             </label>
+            <label className="text-xs">
+              <span className="text-slate-600 dark:text-slate-400">Simulate failure</span>
+              <select
+                name="simulateFailure"
+                defaultValue="0"
+                className="mt-1 block rounded border border-slate-300 px-2 py-1.5 text-sm dark:border-slate-600 dark:bg-slate-950"
+              >
+                <option value="0">No</option>
+                <option value="1">Yes (test alert)</option>
+              </select>
+            </label>
             <button type="submit" className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white dark:bg-slate-100 dark:text-slate-900">
-              Run stub
+              Run refresh
             </button>
           </form>
         )}
@@ -53,6 +63,7 @@ export default async function AdminSyncPage() {
                 <th className="px-3 py-2">Started</th>
                 <th className="px-3 py-2">Source</th>
                 <th className="px-3 py-2">Status</th>
+                <th className="px-3 py-2">Trigger</th>
                 <th className="px-3 py-2">Records</th>
                 <th className="px-3 py-2">Message</th>
               </tr>
@@ -65,6 +76,7 @@ export default async function AdminSyncPage() {
                   </td>
                   <td className="px-3 py-2">{j.dataSource.name}</td>
                   <td className="px-3 py-2 font-mono">{j.status}</td>
+                  <td className="px-3 py-2 font-mono">{j.trigger}</td>
                   <td className="px-3 py-2">{j.recordsProcessed ?? "—"}</td>
                   <td className="px-3 py-2 text-slate-600 dark:text-slate-400">{j.message ?? "—"}</td>
                 </tr>

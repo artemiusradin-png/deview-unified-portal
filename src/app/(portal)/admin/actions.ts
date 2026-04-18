@@ -8,6 +8,7 @@ import { writeAudit } from "@/lib/audit";
 import { getServerSession } from "@/lib/auth-session";
 import { isAdminRole } from "@/lib/rbac";
 import { prisma } from "@/lib/prisma";
+import { runDataSourceSync } from "@/lib/sync";
 
 async function auditMeta() {
   const h = await headers();
@@ -20,6 +21,14 @@ async function auditMeta() {
 async function requireAdmin() {
   const s = await getServerSession();
   if (!s || !isAdminRole(s.role)) {
+    throw new Error("Unauthorized");
+  }
+  return s;
+}
+
+async function requireStaffOrAdmin() {
+  const s = await getServerSession();
+  if (!s || (s.role !== "ADMIN" && s.role !== "STAFF")) {
     throw new Error("Unauthorized");
   }
   return s;
@@ -81,31 +90,37 @@ export async function createUserAction(formData: FormData) {
 }
 
 export async function runStubSyncAction(formData: FormData) {
-  const s = await requireAdmin();
+  const s = await requireStaffOrAdmin();
   const { ip, userAgent } = await auditMeta();
   const dataSourceId = String(formData.get("dataSourceId") ?? "").trim();
+  const simulateFailure = String(formData.get("simulateFailure") ?? "") === "1";
   if (!dataSourceId) throw new Error("Source required");
-  const job = await prisma.syncJob.create({
-    data: {
-      dataSourceId,
-      status: "completed",
-      message: "Stub sync — replace with ETL / connector run.",
-      recordsProcessed: 0,
-      finishedAt: new Date(),
-    },
-  });
-  await prisma.dataSource.update({
-    where: { id: dataSourceId },
-    data: { lastSyncAt: new Date(), status: "stub-synced" },
+  const result = await runDataSourceSync({
+    dataSourceId,
+    trigger: "manual",
+    simulateFailure,
   });
   await writeAudit({
     userId: s.userId,
-    action: "admin.sync.stub",
-    resource: job.id,
-    metadata: { dataSourceId },
+    action: "admin.sync.manual",
+    resource: result.jobId,
+    metadata: { dataSourceId, simulateFailure, result },
     ip,
     userAgent,
   });
   revalidatePath("/admin/sync");
   revalidatePath("/admin/sources");
+  revalidatePath("/admin");
+}
+
+export async function markAlertReadAction(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("alertId") ?? "").trim();
+  if (!id) throw new Error("Alert id required");
+  await prisma.adminAlert.update({
+    where: { id },
+    data: { readAt: new Date() },
+  });
+  revalidatePath("/admin");
+  revalidatePath("/admin/management");
 }

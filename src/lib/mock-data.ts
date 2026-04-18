@@ -1,7 +1,7 @@
 import type { CustomerProfile, SearchResultRow } from "@/types/customer";
 
 /** Exported for DB seed — same records power mock fallback when DATABASE_URL is unset. */
-export const profiles: CustomerProfile[] = [
+const rawProfiles: CustomerProfile[] = [
   {
     id: "cust-001",
     searchRow: {
@@ -538,6 +538,125 @@ export const profiles: CustomerProfile[] = [
     },
   },
 ];
+
+function normalizeProfile(profile: CustomerProfile): CustomerProfile {
+  const loanHistory = profile.loanHistory.map((loan, i) => ({
+    status: loan.status,
+    applyNumber: loan.applyNumber || profile.searchRow.applicationNumber,
+    loanNumber: loan.loanNumber,
+    repaidTenor: loan.repaidTenor ?? (loan.status.toLowerCase().includes("closed") ? 48 : i * 3),
+    totalTenor: loan.totalTenor ?? 60,
+    loanAmount: loan.loanAmount || "SGD 500,000",
+    instalmentAmount: loan.instalmentAmount || "SGD 12,400",
+    principalBalance: loan.principalBalance || (loan.status.toLowerCase().includes("closed") ? "SGD 0" : "SGD 462,400"),
+    interestBalance: loan.interestBalance || "SGD 3,200",
+    nextDueDate: loan.nextDueDate || "2026-01-05",
+    detailNote: loan.detailNote || loan.period || "",
+    product: loan.product,
+    period: loan.period,
+  }));
+  const applyInfo = {
+    ...profile.applyInfo,
+    loanType: profile.applyInfo.loanType || profile.searchRow.loanType || profile.applyInfo.product,
+    applyDate: profile.applyInfo.applyDate || profile.applyInfo.applicationDate || profile.searchRow.applyDate,
+    notes: profile.applyInfo.notes || profile.applyInfo.applicantNote || "",
+    interestMethod: profile.applyInfo.interestMethod || "Flat",
+    repayCycle: profile.applyInfo.repayCycle || "Monthly",
+    loanAmount: profile.applyInfo.loanAmount || loanHistory[0]?.loanAmount || "—",
+    totalTenor: profile.applyInfo.totalTenor || String(loanHistory[0]?.totalTenor ?? 60),
+    flatRate: profile.applyInfo.flatRate || "1.35% / month",
+    effectiveRate: profile.applyInfo.effectiveRate || "16.2% p.a.",
+    instalmentAmount: profile.applyInfo.instalmentAmount || loanHistory[0]?.instalmentAmount || "—",
+    maxInterest: profile.applyInfo.maxInterest || "SGD 160,000",
+    totalInterest: profile.applyInfo.totalInterest || "SGD 61,300",
+    loanPurpose: profile.applyInfo.loanPurpose || "Working capital",
+    staff: profile.applyInfo.staff || "Ops Staff",
+    referralAgent: profile.applyInfo.referralAgent || "Direct",
+    referralAgentAddress: profile.applyInfo.referralAgentAddress || "—",
+    relation: profile.applyInfo.relation || "Borrower",
+    mainAvenue: profile.applyInfo.mainAvenue || "Branch",
+    mainPurpose: profile.applyInfo.mainPurpose || "Business",
+    autopayBankInfo: profile.applyInfo.autopayBankInfo || "Autopay enabled",
+    personalInfo: profile.applyInfo.personalInfo || `${profile.searchRow.name} (${profile.searchRow.idNumber})`,
+  };
+  return {
+    ...profile,
+    searchRow: {
+      ...profile.searchRow,
+      passportNumber: profile.searchRow.passportNumber || profile.searchRow.idNumber,
+      teRefEnquiry: profile.searchRow.teRefEnquiry || `TE-${profile.searchRow.applicationNumber}`,
+      completionChecks: profile.searchRow.completionChecks || {
+        apply: true,
+        partakers: profile.partakers.length > 0,
+        credit: true,
+        income: true,
+        review: profile.searchRow.status.toLowerCase().includes("pending") ? false : true,
+      },
+    },
+    applyInfo,
+    partakers: profile.partakers.map((p) => ({
+      ...p,
+      partakerType: p.partakerType || p.relationship || "Related party",
+      relation: p.relation || p.relationship || "—",
+      mobileNo: p.mobileNo || p.contact || "",
+      homeNo: p.homeNo || "—",
+      passport: p.passport || p.linkedId || "—",
+    })),
+    creditRef: {
+      ...profile.creditRef,
+      items:
+        profile.creditRef.items && profile.creditRef.items.length > 0
+          ? profile.creditRef.items
+          : [
+              {
+                creditor: "Internal",
+                creditType: profile.searchRow.loanType,
+                loanAmount: loanHistory[0]?.loanAmount || "SGD 500,000",
+                instalmentAmount: loanHistory[0]?.instalmentAmount || "SGD 12,400",
+                outstandingTenor: `${Math.max(0, (loanHistory[0]?.totalTenor ?? 60) - (loanHistory[0]?.repaidTenor ?? 0))}`,
+                balanceAmount: loanHistory[0]?.principalBalance || "SGD 462,400",
+                debtor: profile.searchRow.name,
+              },
+            ],
+    },
+    loanHistory,
+    approvalInfo: profile.approvalInfo.map((a) => ({
+      ...a,
+      approvalDate: a.approvalDate || a.date || "",
+      approvalStaff: a.approvalStaff || a.reviewer || "",
+      interestMethod: a.interestMethod || applyInfo.interestMethod,
+      repayCycle: a.repayCycle || applyInfo.repayCycle,
+      loanAmount: a.loanAmount || applyInfo.loanAmount,
+      totalTenor: a.totalTenor || applyInfo.totalTenor,
+      flatRate: a.flatRate || applyInfo.flatRate,
+      effectiveRate: a.effectiveRate || applyInfo.effectiveRate,
+      dsr: a.dsr || profile.dsr.ratio,
+    })),
+    repayHistory: profile.repayHistory.map((r, i) => ({
+      ...r,
+      repayDate: r.repayDate || r.date || "",
+      repayNo: r.repayNo || `R-${i + 1}`,
+      repayType: r.repayType || r.channel || "Instalment",
+      tenor: r.tenor || String(i + 1),
+      repayAmount: r.repayAmount || r.amount || "",
+      overdueInterest: r.overdueInterest || "SGD 0",
+      handlingFee: r.handlingFee || "SGD 0",
+      receivedAmount: r.receivedAmount || r.amount || "",
+      tempAmount: r.tempAmount || "SGD 0",
+      remarks: r.remarks || r.balanceAfter || "",
+    })),
+    repayCondition: {
+      ...profile.repayCondition,
+      nextRepayDate: profile.repayCondition.nextRepayDate || loanHistory[0]?.nextDueDate || "",
+      nextRepayAmount: profile.repayCondition.nextRepayAmount || loanHistory[0]?.instalmentAmount || "",
+      principalBalance: profile.repayCondition.principalBalance || loanHistory[0]?.principalBalance || "",
+      interestBalance: profile.repayCondition.interestBalance || loanHistory[0]?.interestBalance || "",
+      feeBalance: profile.repayCondition.feeBalance || "SGD 0",
+    },
+  };
+}
+
+export const profiles: CustomerProfile[] = rawProfiles.map(normalizeProfile);
 
 export function getAllSearchRows(): SearchResultRow[] {
   return profiles.map((p) => p.searchRow);
