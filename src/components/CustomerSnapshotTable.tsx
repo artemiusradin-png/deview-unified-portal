@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import type { SearchResultRow } from "@/types/customer";
 import { maskPhoneDisplay } from "@/lib/mask-phone";
@@ -13,6 +14,7 @@ type Props = {
 
 /** Card list for small screens; full table from md and up. */
 export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Props) {
+  const router = useRouter();
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const grouped = useMemo(() => {
     const byBorrower = new Map<string, SearchResultRow[]>();
@@ -138,21 +140,27 @@ export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Pr
                 const hasMultiple = entries.length > 1;
                 const open = openGroups[key] ?? false;
                 const base = (
-                  <tr key={primary.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50">
+                  <tr
+                    key={primary.id}
+                    className="cursor-pointer hover:bg-slate-50/80 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:hover:bg-slate-800/50"
+                    role="link"
+                    tabIndex={0}
+                    aria-label={`Open profile for ${primary.name}`}
+                    onClick={() => router.push(`/profile/${primary.id}`)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        router.push(`/profile/${primary.id}`);
+                      }
+                    }}
+                  >
                     <td className="px-3 py-2">{primary.status}</td>
                     <td className="px-3 py-2">{primary.loanType}</td>
                     <td className="px-3 py-2 font-mono">{primary.applicationNumber}</td>
                     <td className="px-3 py-2 font-mono">{primary.loanNumber}</td>
                     <td className="px-3 py-2 whitespace-nowrap">{primary.applyDate}</td>
                     <td className="px-3 py-2 font-mono">{primary.idNumber}</td>
-                    <td className="px-3 py-2">
-                      <Link
-                        href={`/profile/${primary.id}`}
-                        className="font-medium text-slate-900 underline-offset-2 hover:underline dark:text-slate-100"
-                      >
-                        {primary.name}
-                      </Link>
-                    </td>
+                    <td className="px-3 py-2 font-medium text-slate-900 dark:text-slate-100">{primary.name}</td>
                     <td className="px-3 py-2">{primary.age}</td>
                     <td className="px-3 py-2 max-w-[140px] truncate" title={primary.job}>
                       {primary.job}
@@ -191,7 +199,20 @@ export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Pr
                 const children =
                   hasMultiple && open
                     ? entries.map((entry) => (
-                        <tr key={`${key}-${entry.id}`} className="bg-slate-50/30 text-[11px] dark:bg-slate-800/20">
+                        <tr
+                          key={`${key}-${entry.id}`}
+                          className="cursor-pointer bg-slate-50/30 text-[11px] hover:bg-slate-100/60 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:bg-slate-800/20 dark:hover:bg-slate-800/50"
+                          role="link"
+                          tabIndex={0}
+                          aria-label={`Open profile for ${entry.name} ${entry.companyUnit}`}
+                          onClick={() => router.push(`/profile/${entry.id}`)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              router.push(`/profile/${entry.id}`);
+                            }
+                          }}
+                        >
                           <td className="px-3 py-2" colSpan={2}>
                             {entry.status}
                           </td>
@@ -199,11 +220,7 @@ export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Pr
                           <td className="px-3 py-2 font-mono">{entry.loanNumber}</td>
                           <td className="px-3 py-2">{entry.applyDate}</td>
                           <td className="px-3 py-2 font-mono">{entry.idNumber}</td>
-                          <td className="px-3 py-2">
-                            <Link href={`/profile/${entry.id}`} className="underline-offset-2 hover:underline">
-                              {entry.companyUnit}
-                            </Link>
-                          </td>
+                          <td className="px-3 py-2">{entry.companyUnit}</td>
                           <td className="px-3 py-2">{entry.age}</td>
                           <td className="px-3 py-2">{entry.job}</td>
                           <td className="px-3 py-2">{maskPhoneDisplay(entry.mobile)}</td>
