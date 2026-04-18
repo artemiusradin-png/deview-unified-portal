@@ -81,7 +81,7 @@ export default async function SearchHomePage() {
                 href="/results?q=&company=Gaosheng%20Finance%20Co.%2C%20Ltd."
                 className="block rounded border border-slate-200 px-2.5 py-1.5 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
               >
-                Gaosheng Finance Co., Ltd.
+                Company E
               </Link>
             </li>
           </ul>

@@ -28,7 +28,7 @@ export function RiskAnalysisCard({ profile }: { profile: CustomerProfile }) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-            {langText(isZh, "Risk Analysis", "風險分析")}
+            {langText(isZh, "AI Analysis (Risk)", "AI 分析（風險）")}
           </p>
           <h2 className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-slate-50">
             {profile.searchRow.name}

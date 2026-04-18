@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import type { CustomerProfile } from "@/types/customer";
 import { RiskAnalysisCard } from "@/components/RiskAnalysisCard";
-import { AiSummaryPanel } from "@/components/AiSummaryPanel";
 import { langText, useLanguage } from "@/components/LanguageSwitcher";
 import { maskContactDisplay, maskPhoneDisplay } from "@/lib/mask-phone";
 
@@ -86,7 +85,7 @@ export function ProfileModules({ profile }: { profile: CustomerProfile }) {
               href={`/assistant?customer=${profile.id}`}
               className="mt-2 inline-block text-xs font-medium text-slate-900 underline-offset-2 hover:underline dark:text-slate-100"
             >
-              {langText(isZh, "Open AI assistant with this record →", "用此紀錄開啟 AI 助手 →")}
+              {langText(isZh, "AI assistant with this record →", "用此紀錄 AI 助手 →")}
             </Link>
           </div>
           <div className="flex flex-wrap gap-2 text-xs">
@@ -111,8 +110,6 @@ export function ProfileModules({ profile }: { profile: CustomerProfile }) {
       </div>
 
       <RiskAnalysisCard profile={profile} />
-
-      <AiSummaryPanel customerId={profile.id} />
 
       <div className="flex flex-col gap-4 lg:flex-row">
         <nav className="flex shrink-0 flex-row flex-wrap gap-1 lg:w-48 lg:flex-col lg:flex-nowrap">
