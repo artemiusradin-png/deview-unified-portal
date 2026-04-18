@@ -1,0 +1,119 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { LogoutButton } from "@/components/LogoutButton";
+
+const mobileNavLink =
+  "shrink-0 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 active:bg-slate-100 dark:text-slate-200 dark:active:bg-slate-800 min-h-[44px] flex items-center";
+
+type Props = {
+  isAdmin: boolean;
+  children: React.ReactNode;
+};
+
+export function PortalShell({ isAdmin, children }: Props) {
+  const [sidebarHidden, setSidebarHidden] = useState(false);
+
+  return (
+    <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+      {!sidebarHidden ? (
+        <aside className="hidden h-screen w-52 shrink-0 border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 md:flex md:flex-col">
+          <div className="border-b border-slate-200 px-4 py-4 dark:border-slate-800">
+            <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-500">Powered by DeView</p>
+            <p className="text-sm font-semibold leading-tight">
+              <span className="lang-en">Data Portal</span>
+              <span className="lang-zh">數據平台</span>
+            </p>
+          </div>
+          <nav className="flex flex-1 flex-col gap-1 p-3 text-sm">
+            <Link
+              href="/"
+              className="rounded-md px-2 py-1.5 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+            >
+              <span className="lang-en">Dashboard</span>
+              <span className="lang-zh">儀表板</span>
+            </Link>
+            <Link
+              href="/results?q="
+              className="rounded-md px-2 py-1.5 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+            >
+              <span className="lang-en">Last results</span>
+              <span className="lang-zh">最近結果</span>
+            </Link>
+            <Link
+              href="/assistant"
+              className="rounded-md px-2 py-1.5 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+            >
+              <span className="lang-en">AI assistant</span>
+              <span className="lang-zh">AI 助手</span>
+            </Link>
+            {isAdmin ? (
+              <Link
+                href="/admin"
+                className="rounded-md px-2 py-1.5 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+              >
+                <span className="lang-en">Admin</span>
+                <span className="lang-zh">管理</span>
+              </Link>
+            ) : null}
+          </nav>
+          <div className="space-y-3 border-t border-slate-200 p-3 dark:border-slate-800">
+            <LanguageSwitcher />
+            <LogoutButton />
+          </div>
+        </aside>
+      ) : null}
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
+        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95">
+          <div className="hidden items-center justify-between px-3 py-2 md:flex">
+            <button
+              type="button"
+              onClick={() => setSidebarHidden((v) => !v)}
+              className="rounded-md border border-slate-300 px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+            >
+              {sidebarHidden ? "Show menu" : "Hide menu"}
+            </button>
+          </div>
+          <div className="flex items-center justify-between gap-2 px-3 py-2 pt-[max(0.5rem,env(safe-area-inset-top))] md:hidden">
+            <span className="truncate text-sm font-semibold text-slate-900 dark:text-slate-50">
+              <span className="lang-en">Data Portal</span>
+              <span className="lang-zh">數據平台</span>
+            </span>
+            <div className="flex shrink-0 items-center gap-2">
+              <LanguageSwitcher />
+              <LogoutButton compact />
+            </div>
+          </div>
+          <nav
+            className="flex gap-1 overflow-x-auto border-t border-slate-100 px-2 py-1.5 dark:border-slate-800 md:hidden"
+            aria-label="Main navigation"
+          >
+            <Link href="/" className={mobileNavLink}>
+              <span className="lang-en">Home</span>
+              <span className="lang-zh">首頁</span>
+            </Link>
+            <Link href="/results?q=" className={mobileNavLink}>
+              <span className="lang-en">Results</span>
+              <span className="lang-zh">結果</span>
+            </Link>
+            <Link href="/assistant" className={mobileNavLink}>
+              <span className="lang-en">Assistant</span>
+              <span className="lang-zh">助手</span>
+            </Link>
+            {isAdmin ? (
+              <Link href="/admin" className={mobileNavLink}>
+                <span className="lang-en">Admin</span>
+                <span className="lang-zh">管理</span>
+              </Link>
+            ) : null}
+          </nav>
+        </header>
+        <div className="flex-1 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-4 sm:py-4 md:p-8">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
