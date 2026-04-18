@@ -5,14 +5,31 @@ import { useId, useState } from "react";
 import { AssistantClient } from "@/components/AssistantClient";
 import { langText, useLanguage } from "@/components/LanguageSwitcher";
 
-function SparklesIcon({ className }: { className?: string }) {
+function AssistantIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
-        fillRule="evenodd"
-        d="M9 4.5a.75.75 0 01.721.544l.813 2.846a3.75 3.75 0 002.576 2.576l2.846.813a.75.75 0 010 1.442l-2.846.813a3.75 3.75 0 00-2.576 2.576l-.813 2.846a.75.75 0 01-1.442 0l-.813-2.846a3.75 3.75 0 00-2.576-2.576l-2.846-.813a.75.75 0 010-1.442l2.846-.813A3.75 3.75 0 007.466 7.89l.813-2.846A.75.75 0 019 4.5zM18.5 14.25a.75.75 0 01.68.433l.387.97a1.5 1.5 0 001.023 1.023l.97.387a.75.75 0 010 1.4l-.97.387a1.5 1.5 0 00-1.023 1.023l-.387.97a.75.75 0 01-1.4 0l-.387-.97a1.5 1.5 0 00-1.023-1.023l-.97-.387a.75.75 0 010-1.4l.97-.387a1.5 1.5 0 001.023-1.023l.387-.97a.75.75 0 01.72-.433z"
-        clipRule="evenodd"
+        d="M5.75 6.75A2.75 2.75 0 018.5 4h7A2.75 2.75 0 0118.25 6.75v5.5A2.75 2.75 0 0115.5 15h-4.25l-3.58 3.06A.75.75 0 016.5 17.49V15A2.75 2.75 0 013.75 12.25v-5.5z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.7"
       />
+      <path
+        d="M9 9.5h6M9 12h3.75"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.7"
+      />
+    </svg>
+  );
+}
+
+function ChevronIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" aria-hidden>
+      <path d="M6 8l4 4 4-4" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
     </svg>
   );
 }
@@ -50,16 +67,27 @@ export function DashboardSearchWithAssistant() {
             aria-expanded={open}
             aria-controls={panelId}
             onClick={() => setOpen((v) => !v)}
-            className="group relative flex min-h-[48px] min-w-0 flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-to-b from-violet-600 to-violet-700 px-3 py-3 text-sm font-semibold text-white shadow-md shadow-violet-600/25 ring-1 ring-violet-500/30 hover:from-violet-500 hover:to-violet-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 sm:min-h-0 sm:flex-initial sm:px-4 sm:py-2.5 dark:shadow-violet-900/40 dark:ring-violet-400/20"
+            className={`group flex min-h-[48px] min-w-0 flex-1 items-center justify-center gap-2 rounded-lg border px-3 py-3 text-sm font-semibold shadow-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-500 sm:min-h-0 sm:flex-initial sm:px-3.5 sm:py-2.5 ${
+              open
+                ? "border-slate-900 bg-slate-900 text-white hover:bg-slate-800 dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+                : "border-slate-300 bg-white text-slate-800 hover:border-slate-400 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:border-slate-500 dark:hover:bg-slate-800"
+            }`}
           >
-            <SparklesIcon className="size-4 shrink-0 opacity-95" />
-            <span className="truncate sm:max-w-[9.5rem]">
-              {open ? langText(isZh, "Hide assistant", "隱藏助手") : langText(isZh, "AI assistant", "AI 助手")}
-            </span>
             <span
-              className="absolute -right-0.5 -top-0.5 flex size-2.5 rounded-full bg-emerald-400 ring-2 ring-white dark:ring-slate-950"
+              className={`flex size-6 shrink-0 items-center justify-center rounded-md border text-[10px] font-bold leading-none tracking-normal ${
+                open
+                  ? "border-white/20 bg-white/10 text-white dark:border-slate-900/15 dark:bg-slate-900/10 dark:text-slate-900"
+                  : "border-slate-200 bg-slate-100 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+              }`}
               aria-hidden
-            />
+            >
+              AI
+            </span>
+            <AssistantIcon className="hidden size-4 shrink-0 opacity-80 sm:block" />
+            <span className="truncate sm:max-w-[10.5rem]">
+              {open ? langText(isZh, "Close assistant", "關閉助手") : langText(isZh, "AI assistant", "AI 助手")}
+            </span>
+            <ChevronIcon className={`size-4 shrink-0 opacity-70 transition-transform ${open ? "rotate-180" : ""}`} />
           </button>
         </div>
       </form>
@@ -69,33 +97,43 @@ export function DashboardSearchWithAssistant() {
         role="region"
         aria-labelledby={`${panelId}-trigger`}
         hidden={!open}
-        className="mt-4 rounded-xl border border-violet-200/80 bg-gradient-to-b from-white to-violet-50/40 p-4 shadow-sm dark:border-violet-900/50 dark:from-slate-900 dark:to-violet-950/20 sm:p-5"
+        className="mt-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-5"
       >
-        <div className="mb-3 flex flex-wrap items-start justify-between gap-2 border-b border-violet-100 pb-3 dark:border-violet-900/40">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-violet-700 dark:text-violet-300">
-              {langText(isZh, "On this page", "此頁")}
-            </p>
-            <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-400">
+        <div className="mb-3 flex flex-wrap items-start justify-between gap-3 border-b border-slate-200 pb-3 dark:border-slate-800">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                <AssistantIcon className="size-4" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">
+                  {langText(isZh, "AI assistant", "AI 助手")}
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {langText(isZh, "General portal support", "一般平台支援")}
+                </p>
+              </div>
+            </div>
+            <p className="mt-2 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
               {isZh ? (
                 <>
-                  一般平台及需求問題。開啟{" "}
+                  可詢問平台及需求問題。由{" "}
                   <Link
                     href="/assistant"
-                    className="font-medium text-violet-700 underline-offset-2 hover:underline dark:text-violet-300"
+                    className="font-medium text-slate-900 underline underline-offset-2 hover:text-slate-700 dark:text-slate-100 dark:hover:text-slate-300"
                   >
-                    客戶檔案 → 助手
+                    客戶檔案開啟助手
                   </Link>{" "}
                   後，回答會以該紀錄為依據。
                 </>
               ) : (
                 <>
-                  General portal and discovery questions. Open a{" "}
+                  Ask general portal and discovery questions. Launch it from a{" "}
                   <Link
                     href="/assistant"
-                    className="font-medium text-violet-700 underline-offset-2 hover:underline dark:text-violet-300"
+                    className="font-medium text-slate-900 underline underline-offset-2 hover:text-slate-700 dark:text-slate-100 dark:hover:text-slate-300"
                   >
-                    customer profile → assistant
+                    customer profile
                   </Link>{" "}
                   to ground answers on that record.
                 </>
@@ -104,7 +142,7 @@ export function DashboardSearchWithAssistant() {
           </div>
           <Link
             href="/assistant"
-            className="shrink-0 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+            className="shrink-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
           >
             {langText(isZh, "Full-screen tab", "全屏分頁")}
           </Link>

@@ -44,11 +44,46 @@ export default async function SearchHomePage() {
         <section className="mb-4 rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-900">
           <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">Company databases</h2>
           <ul className="mt-2 space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
-            <li className="rounded border border-slate-200 px-2.5 py-1.5 dark:border-slate-700">Company A</li>
-            <li className="rounded border border-slate-200 px-2.5 py-1.5 dark:border-slate-700">Company B</li>
-            <li className="rounded border border-slate-200 px-2.5 py-1.5 dark:border-slate-700">Company C</li>
-            <li className="rounded border border-slate-200 px-2.5 py-1.5 dark:border-slate-700">Company D</li>
-            <li className="rounded border border-slate-200 px-2.5 py-1.5 dark:border-slate-700">Gaosheng Finance Co., Ltd.</li>
+            <li>
+              <Link
+                href="/results?q=&company=Company%20A"
+                className="block rounded border border-slate-200 px-2.5 py-1.5 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
+              >
+                Company A
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/results?q=&company=Company%20B"
+                className="block rounded border border-slate-200 px-2.5 py-1.5 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
+              >
+                Company B
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/results?q=&company=Company%20C"
+                className="block rounded border border-slate-200 px-2.5 py-1.5 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
+              >
+                Company C
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/results?q=&company=Company%20D"
+                className="block rounded border border-slate-200 px-2.5 py-1.5 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
+              >
+                Company D
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/results?q=&company=Gaosheng%20Finance%20Co.%2C%20Ltd."
+                className="block rounded border border-slate-200 px-2.5 py-1.5 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
+              >
+                Gaosheng Finance Co., Ltd.
+              </Link>
+            </li>
           </ul>
         </section>
         <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">

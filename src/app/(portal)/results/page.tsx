@@ -96,6 +96,17 @@ export default async function ResultsPage({ searchParams }: Props) {
   return (
     <div className="mx-auto max-w-6xl">
       <div className="flex flex-col gap-4">
+        {sp.company?.trim() ? (
+          <div className="rounded-lg border border-slate-200 bg-white p-3 text-xs dark:border-slate-800 dark:bg-slate-900">
+            <p className="mb-2 font-semibold text-slate-800 dark:text-slate-100">
+              Modules · {sp.company}
+            </p>
+            <p className="leading-relaxed text-slate-600 dark:text-slate-300">
+              A. Apply Info. | B. Partakers | C. Credit Ref. | E. Mortgage | F. Income/Expenditure(DSR) | Loan Hist. [N] |
+              Partaking Hist. [N] | Approval Info. | Repay Hist. | Repay Cond.
+            </p>
+          </div>
+        ) : null}
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50">

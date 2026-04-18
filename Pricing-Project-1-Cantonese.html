@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TE Credit 信貸審查及借款人決策平台 — 報價方案</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Noto Sans TC", "PingFang HK", "Microsoft JhengHei", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #fff;
+    padding: 48px 56px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 32px; font-weight: 800; margin-bottom: 16px; }
+  h2 { font-size: 22px; font-weight: 700; margin: 36px 0 12px; }
+  h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .meta { font-size: 13px; margin-bottom: 28px; border-bottom: 1px solid #e2e2e2; padding-bottom: 16px; }
+  .meta strong { font-weight: 700; }
+  p { margin-bottom: 10px; }
+
+  /* Info / warning callout */
+  .callout-info {
+    background: #e8f4fb;
+    border-left: 4px solid #3b9edd;
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  .callout-warn {
+    background: #fffbe6;
+    border-left: 4px solid #f5a623;
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  .callout-info::before { content: "ℹ  "; font-weight: 700; color: #3b9edd; }
+  .callout-warn::before { content: "⚠  "; font-weight: 700; color: #f5a623; }
+
+  /* Pricing columns */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .pricing-col {
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    padding: 20px 16px;
+  }
+  .pricing-col .price {
+    font-size: 40px;
+    font-weight: 900;
+    line-height: 1.1;
+    margin: 8px 0 12px;
+  }
+  .pricing-col ul {
+    list-style: disc;
+    padding-left: 18px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .pricing-col ul li { margin-bottom: 4px; }
+  .benefit-box {
+    background: #f5f5f5;
+    border-radius: 4px;
+    padding: 10px 12px;
+    margin-top: 14px;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .benefit-box strong { font-weight: 700; }
+
+  /* Feature comparison table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  thead tr { border-bottom: 2px solid #1a1a1a; }
+  thead th {
+    text-align: left;
+    padding: 8px 10px;
+    font-weight: 700;
+    font-size: 12px;
+  }
+  tbody tr { border-bottom: 1px solid #e8e8e8; }
+  tbody tr:hover { background: #fafafa; }
+  tbody td { padding: 7px 10px; }
+  tbody td:first-child { font-size: 13px; }
+  tbody td:not(:first-child) { text-align: center; font-size: 16px; }
+
+  /* Recommended positioning */
+  .position-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .position-col {
+    background: #f0f4f8;
+    border-radius: 6px;
+    padding: 16px;
+    font-size: 13px;
+  }
+  .position-col strong { font-size: 15px; font-weight: 800; display: block; margin-bottom: 6px; }
+
+  /* Hosting section */
+  .hosting-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin: 16px 0;
+  }
+  .hosting-box {
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    padding: 20px 18px;
+  }
+  .hosting-box .price {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1.1;
+    margin: 6px 0 12px;
+  }
+  .hosting-box ul {
+    list-style: disc;
+    padding-left: 18px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  /* Next steps */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-top: 20px;
+    border-top: 1px solid #e2e2e2;
+  }
+  .step {
+    padding: 16px 0 16px;
+    border-bottom: 1px solid #e2e2e2;
+  }
+  .step:nth-child(odd) { padding-right: 24px; border-right: 1px solid #e2e2e2; }
+  .step:nth-child(even) { padding-left: 24px; }
+  .step .step-num { font-size: 11px; color: #888; margin-bottom: 4px; }
+  .step h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .step p { font-size: 13px; color: #444; margin: 0; }
+
+  @media print {
+    body { padding: 24px 32px; }
+    .pricing-grid, .position-grid { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<h1>TE Credit 信貸審查及借款人決策平台</h1>
+<div class="meta">
+  <strong>提交予：</strong>林先生 &nbsp;&nbsp;
+  <strong>由：</strong>DeView 編製 &nbsp;&nbsp;
+  <strong>日期：</strong>2026年4月16日
+</div>
+
+<!-- ========== PROJECT OVERVIEW ========== -->
+<h2>項目概覽</h2>
+<p>
+  DeView 建議為 Eden's Father 建立一個安全的內部網絡平台，配合客戶現有的 TE Credit 工作流程運作。
+  平台將每日自動更新獲授權的 TE Credit 借款人資料，將數據整理成清晰的審查介面，
+  並透過 AI 輔助借款人摘要及優良╱劣質評級指標，協助員工作出決策。
+</p>
+<p>
+  本項目的目標並非取代 TE Credit。TE Credit 仍然是信貸參考來源。DeView 平台成為客戶的內部運作層，
+  涵蓋搜尋、審查、決策支援、歷史紀錄追蹤、AI 摘要、審計日誌及管理層可見度。
+</p>
+<div class="callout-info">
+  TE Credit 的自動存取將透過客戶可用的核准方式實施，例如 API、匯出或獲許可的自動存取。
+  所有存取必須僅限於已授權的借款人查詢，並須符合 TE Credit 的使用條款及香港個人資料保障規定。
+</div>
+
+<!-- ========== PRICING OPTIONS ========== -->
+<h2>定價方案</h2>
+<div class="pricing-grid">
+
+  <!-- Option 1 -->
+  <div class="pricing-col">
+    <h3>方案一：TE Credit AI 平台</h3>
+    <div class="price">HKD<br>30,000</div>
+    <p style="font-size:13px;margin-bottom:10px;">
+      此方案包含核心平台功能，附每日自動 TE Credit 數據更新及 AI 輔助借款人決策支援。
+    </p>
+    <ul>
+      <li>安全內部員工登入及角色存取控制</li>
+      <li>借款人搜尋及個人檔案頁面</li>
+      <li>每日自動更新 TE Credit 數據（須視乎核准存取方式）</li>
+      <li>將最新獲許可的 TE Credit 借款人數據儲存於 Supabase 或私人伺服器數據庫</li>
+      <li>TE Credit 審查模組，顯示貸款金額、期限、批核╱拒批、逾期還款、違約、過往交易、壞帳撇帳、利息、還款狀況及欠款指標（視乎數據可用性）</li>
+      <li>最後同步日期╱時間及同步狀態顯示</li>
+      <li>AI 生成借款人摘要、AI 輔助優良╱劣質借款人評級，及基於 TE Credit 可見因素的 AI 評級說明</li>
+      <li>逾期還款、違約、壞帳撇帳、欠款及重複拒批紀錄的基本風險標籤</li>
+      <li>查詢及存取審計日誌、基本管理員用戶管理，以及緊急情況下授權員工的人工刷新選項</li>
+    </ul>
+    <div class="benefit-box">
+      <strong>業務效益：</strong>此方案讓客戶由第一天起即擁有一個實用的運作系統：TE Credit 數據每日更新，
+      員工可在同一平台審查借款人，AI 根據現有 TE Credit 資料協助判斷借款人是否優良、具風險或不適合放款。
+    </div>
+    <div class="callout-warn" style="margin-top:12px;font-size:12px;">
+      <strong>重要提示：</strong>AI 評級屬決策支援指標。最終批核或拒批決定應由授權員工及管理層作出。
+    </div>
+  </div>
+
+  <!-- Option 2 -->
+  <div class="pricing-col">
+    <h3>方案二：營運管控方案</h3>
+    <div class="price">HKD<br>45,000</div>
+    <p style="font-size:13px;margin-bottom:10px;">
+      此方案包含方案一的所有功能，並加入更強的日常放款審查營運管控。
+    </p>
+    <ul>
+      <li>按借款人評級、風險狀態、逾期還款、違約、撇帳、批核╱拒批及最後刷新日期進行的進階搜尋篩選</li>
+      <li>借款人審查儀表板，顯示近期查核及高風險個案</li>
+      <li>TE Credit 查詢費用追蹤</li>
+      <li>可匯出╱列印的借款人審查報告</li>
+      <li>供內部員工審查用的個案備註</li>
+      <li>TE Credit 佐證文件╱截圖附件支援</li>
+      <li>同步失敗警報（通知管理員用戶）</li>
+      <li>按角色設定的增強管理員權限</li>
+      <li>用戶驗收測試支援、上線設置及員工培訓</li>
+    </ul>
+    <div class="benefit-box">
+      <strong>業務效益：</strong>此方案最適合需要管控、可追溯性及更順暢日常工作流程的實際運作團隊。
+      協助管理層了解哪些借款人正被查核、哪些個案具風險，以及 TE Credit 刷新是否正常運行。
+    </div>
+  </div>
+
+  <!-- Option 3 -->
+  <div class="pricing-col">
+    <h3>方案三：管理智能方案</h3>
+    <div class="price">HKD<br>60,000</div>
+    <p style="font-size:13px;margin-bottom:10px;">
+      此方案包含方案二的所有功能，並加入管理層報告、增強 AI 審查及更強的決策智能。
+    </p>
+    <ul>
+      <li>管理層儀表板，顯示借款人評級分布、風險趨勢及審查活動</li>
+      <li>AI 輔助批核╱拒批理由範本（供內部使用）</li>
+      <li>借款趨勢解讀，涵蓋借貸、還款及欠款變動（視 TE Credit 數據支援情況）</li>
+      <li>個案審查優先次序的風險優先評分</li>
+      <li>針對狀態變更或高風險指標借款人的提醒╱警報模組</li>
+      <li>團隊工作流程備註及審查狀態追蹤</li>
+      <li>每月管理報告匯出</li>
+      <li>上線後優先優化期</li>
+    </ul>
+    <div class="benefit-box">
+      <strong>業務效益：</strong>此方案讓業主及管理層更清晰掌握借款人風險、團隊動態及組合走向。
+      將平台從日常查閱工具，升級為管理層決策支援系統。
+    </div>
+  </div>
+
+</div>
+
+<!-- ========== FEATURE COMPARISON ========== -->
+<h2>功能比較表</h2>
+<table>
+  <thead>
+    <tr>
+      <th style="width:52%">功能╱交付項目</th>
+      <th>HKD 30,000</th>
+      <th>HKD 45,000</th>
+      <th>HKD 60,000</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>安全內部網絡平台</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>員工登入及存取控制</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>借款人搜尋及個人檔案頁面</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>每日自動 TE Credit 數據刷新</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>Supabase 或私人伺服器數據儲存</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>TE Credit 借款人數據模組</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>最後同步狀態及刷新時間戳</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>AI 借款人摘要</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>AI 輔助優良╱劣質借款人評級</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>AI 借款人評級說明</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>基本風險標籤</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>查詢及存取審計日誌</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>授權員工人工刷新選項</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>進階風險及評級篩選</td><td></td><td>✓</td><td>✓</td></tr>
+    <tr><td>營運儀表板</td><td></td><td>✓</td><td>✓</td></tr>
+    <tr><td>TE Credit 查詢費用追蹤</td><td></td><td>✓</td><td>✓</td></tr>
+    <tr><td>匯出╱列印借款人報告</td><td></td><td>✓</td><td>✓</td></tr>
+    <tr><td>內部個案備註</td><td></td><td>✓</td><td>✓</td></tr>
+    <tr><td>文件╱截圖附件</td><td></td><td>✓</td><td>✓</td></tr>
+    <tr><td>同步失敗警報</td><td></td><td>✓</td><td>✓</td></tr>
+    <tr><td>增強角色權限</td><td></td><td>✓</td><td>✓</td></tr>
+    <tr><td>用戶驗收測試、上線設置及員工培訓</td><td></td><td>✓</td><td>✓</td></tr>
+    <tr><td>管理層儀表板</td><td></td><td></td><td>✓</td></tr>
+    <tr><td>借款人風險趨勢解讀</td><td></td><td></td><td>✓</td></tr>
+    <tr><td>AI 批核╱拒批理由範本</td><td></td><td></td><td>✓</td></tr>
+    <tr><td>風險優先評分</td><td></td><td></td><td>✓</td></tr>
+    <tr><td>提醒╱警報模組</td><td></td><td></td><td>✓</td></tr>
+    <tr><td>審查狀態工作流程</td><td></td><td></td><td>✓</td></tr>
+    <tr><td>每月管理報告匯出</td><td></td><td></td><td>✓</td></tr>
+    <tr><td>上線後優先優化期</td><td></td><td></td><td>✓</td></tr>
+  </tbody>
+</table>
+
+<!-- ========== RECOMMENDED POSITIONING ========== -->
+<h2>建議定位</h2>
+<p>DeView 建議將各方案定位如下：</p>
+<div class="position-grid">
+  <div class="position-col">
+    <strong>HKD 30,000</strong>
+    強力入門方案，包含每日 TE Credit 同步及 AI 借款人評級
+  </div>
+  <div class="position-col">
+    <strong>HKD 45,000</strong>
+    最具價值的營運方案，附管控功能、報告及團隊工作流程
+  </div>
+  <div class="position-col">
+    <strong>HKD 60,000</strong>
+    頂級管理方案，附智能儀表板及進階決策支援
+  </div>
+</div>
+<p>
+  此架構令基礎方案保持吸引力及實用性，同時為客戶提供清晰的升級理由，
+  以獲得更強的內部管控、管理報告及進階審查工作流程。
+</p>
+
+<!-- ========== HOSTING, COMPLIANCE & NEXT STEPS ========== -->
+<h2>託管、合規及下一步</h2>
+<div class="hosting-grid">
+  <div class="hosting-box">
+    <h3>託管、伺服器及維護</h3>
+    <div class="price">HKD 4,000 /<br>每月</div>
+    <p style="font-size:13px;margin-bottom:10px;">
+      除一次性開發費用外，DeView 可提供私人託管基礎設施、每日同步維護及技術支援。包含服務：
+    </p>
+    <ul>
+      <li>私人伺服器╱雲端託管設置</li>
+      <li>部署及環境管理</li>
+      <li>每日 TE Credit 同步監控</li>
+      <li>備份</li>
+      <li>安全更新</li>
+      <li>輕微錯誤修復及維護支援</li>
+      <li>同步失敗支援</li>
+      <li>基本正常運行時間及營運支援</li>
+    </ul>
+    <p style="font-size:13px;margin-top:10px;">
+      此月費服務確保客戶無需在內部管理技術基礎設施，並為平台及每日 TE Credit 數據刷新提供穩定的長期運作環境。
+    </p>
+  </div>
+
+  <div>
+    <div class="callout-warn">
+      <strong>合規備注：</strong>平台僅透過客戶可用的核准存取方式支援 TE Credit 數據自動刷新。
+      AI 輸出僅用於決策支援，不應取代最終的人工批核。
+    </div>
+
+    <h3 style="margin-top:20px;margin-bottom:8px;">下一步</h3>
+    <p style="font-size:13px;">
+      一旦確認首選方案，DeView 可完成客戶建議書，包括交付時間表、實施假設、付款計劃及 TE Credit 存取要求。
+    </p>
+  </div>
+</div>
+
+<div class="steps-grid">
+  <div class="step">
+    <div class="step-num">01</div>
+    <h3>確認首選方案</h3>
+    <p>從 HKD 30,000 / 45,000 / 60,000 方案中選擇</p>
+  </div>
+  <div class="step">
+    <div class="step-num">02</div>
+    <h3>完成建議書</h3>
+    <p>交付時間表、實施假設及付款計劃</p>
+  </div>
+  <div class="step">
+    <div class="step-num">03</div>
+    <h3>確認 TE Credit 存取方式</h3>
+    <p>核實獲許可的存取方式及數據保留規定</p>
+  </div>
+  <div class="step">
+    <div class="step-num">04</div>
+    <h3>開始實施</h3>
+    <p>DeView 啟動平台建設及整合工作</p>
+  </div>
+</div>
+
+</body>
+</html>
