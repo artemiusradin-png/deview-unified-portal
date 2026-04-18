@@ -42,7 +42,10 @@ export default async function SearchHomePage() {
     <div className="mx-auto max-w-6xl">
       <div className="mt-0 pt-1">
         <section className="mb-4 rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-900">
-          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">Company databases</h2>
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">
+            <span className="lang-en">Company databases</span>
+            <span className="lang-zh">公司資料庫</span>
+          </h2>
           <ul className="mt-2 space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
             <li>
               <Link

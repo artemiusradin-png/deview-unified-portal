@@ -57,7 +57,10 @@ export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Pr
   return (
     <>
       <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] text-slate-600 dark:text-slate-300">
-        <span className="font-semibold text-slate-700 dark:text-slate-200">Company legend:</span>
+        <span className="font-semibold text-slate-700 dark:text-slate-200">
+          <span className="lang-en">Company legend:</span>
+          <span className="lang-zh">公司圖例：</span>
+        </span>
         {(["A", "B", "C", "D", "E"] as const).map((tag) => (
           <span key={tag} className={`rounded border px-2 py-0.5 ${companyRowClass(tag)}`}>
             Company {tag}
@@ -114,7 +117,17 @@ export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Pr
                       <svg className={`size-3 transition-transform ${open ? "rotate-90" : ""}`} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
                         <path d="M7 4l7 6-7 6V4z" />
                       </svg>
-                      {open ? "Hide company/loan groups" : `Open toggle list (${entries.length} entries)`}
+                      {open ? (
+                        <>
+                          <span className="lang-en">Hide company/loan groups</span>
+                          <span className="lang-zh">收起公司／貸款分組</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="lang-en">{`Open toggle list (${entries.length} entries)`}</span>
+                          <span className="lang-zh">{`展開清單（${entries.length} 項）`}</span>
+                        </>
+                      )}
                     </button>
                     {open ? (
                       <ul className="mt-1 space-y-1">
@@ -229,14 +242,34 @@ export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Pr
                           <svg className={`size-3 transition-transform ${open ? "rotate-90" : ""}`} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
                             <path d="M7 4l7 6-7 6V4z" />
                           </svg>
-                          {open ? "Hide grouped loans" : `Open toggle list (${entries.length} company/loan rows)`}
+                          {open ? (
+                            <>
+                              <span className="lang-en">Hide grouped loans</span>
+                              <span className="lang-zh">收起分組貸款</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="lang-en">{`Open toggle list (${entries.length} company/loan rows)`}</span>
+                              <span className="lang-zh">{`展開清單（${entries.length} 列公司／貸款）`}</span>
+                            </>
+                          )}
                         </button>
                         <button
                           type="button"
                           onClick={() => setOpenInline((prev) => ({ ...prev, [key]: !inline }))}
                           className="rounded border border-slate-300 px-2 py-0.5 text-xs hover:bg-white dark:border-slate-600 dark:hover:bg-slate-800"
                         >
-                          {inline ? "Hide inline loan history" : "Show inline loan history"}
+                          {inline ? (
+                            <>
+                              <span className="lang-en">Hide inline loan history</span>
+                              <span className="lang-zh">隱藏內嵌貸款紀錄</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="lang-en">Show inline loan history</span>
+                              <span className="lang-zh">顯示內嵌貸款紀錄</span>
+                            </>
+                          )}
                         </button>
                       </div>
                     </td>
@@ -286,16 +319,16 @@ export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Pr
                               <table className="min-w-full text-[11px]">
                                 <thead className="bg-slate-50 text-left text-[10px] uppercase text-slate-500 dark:bg-slate-800/50">
                                   <tr>
-                                    <th className="px-2 py-1.5">Status</th>
-                                    <th className="px-2 py-1.5">Apply No.</th>
-                                    <th className="px-2 py-1.5">Loan No.</th>
-                                    <th className="px-2 py-1.5">Repaid / Tenor</th>
-                                    <th className="px-2 py-1.5">Loan Amount</th>
-                                    <th className="px-2 py-1.5">Instalment</th>
-                                    <th className="px-2 py-1.5">Principal Bal.</th>
-                                    <th className="px-2 py-1.5">Interest Bal.</th>
-                                    <th className="px-2 py-1.5">Next Due Date</th>
-                                    <th className="px-2 py-1.5">Detail</th>
+                                    <th className="px-2 py-1.5"><span className="lang-en">Status</span><span className="lang-zh">狀態</span></th>
+                                    <th className="px-2 py-1.5"><span className="lang-en">Apply No.</span><span className="lang-zh">申請編號</span></th>
+                                    <th className="px-2 py-1.5"><span className="lang-en">Loan No.</span><span className="lang-zh">貸款編號</span></th>
+                                    <th className="px-2 py-1.5"><span className="lang-en">Repaid / Tenor</span><span className="lang-zh">已還／期數</span></th>
+                                    <th className="px-2 py-1.5"><span className="lang-en">Loan Amount</span><span className="lang-zh">貸款金額</span></th>
+                                    <th className="px-2 py-1.5"><span className="lang-en">Instalment</span><span className="lang-zh">分期金額</span></th>
+                                    <th className="px-2 py-1.5"><span className="lang-en">Principal Bal.</span><span className="lang-zh">本金結餘</span></th>
+                                    <th className="px-2 py-1.5"><span className="lang-en">Interest Bal.</span><span className="lang-zh">利息結餘</span></th>
+                                    <th className="px-2 py-1.5"><span className="lang-en">Next Due Date</span><span className="lang-zh">下次到期日</span></th>
+                                    <th className="px-2 py-1.5"><span className="lang-en">Detail</span><span className="lang-zh">詳情</span></th>
                                   </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -316,7 +349,8 @@ export function CustomerSnapshotTable({ rows, emptyMessage, emptyMessageZh }: Pr
                                           className="rounded border border-slate-300 px-1.5 py-0.5 text-[10px] font-medium hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-800"
                                           onClick={(e) => e.stopPropagation()}
                                         >
-                                          Detail
+                                          <span className="lang-en">Detail</span>
+                                          <span className="lang-zh">詳情</span>
                                         </Link>
                                       </td>
                                     </tr>

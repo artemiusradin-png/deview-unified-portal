@@ -195,16 +195,20 @@ export default async function ResultsPage({ searchParams }: Props) {
               <span className="lang-zh">套用篩選</span>
             </button>
             <div className="col-span-2 border-t border-slate-200 pt-2 dark:border-slate-700 sm:col-span-full">
-              <p className="mb-2 text-[10px] font-semibold uppercase text-slate-500">Advanced</p>
+              <p className="mb-2 text-[10px] font-semibold uppercase text-slate-500">
+                <span className="lang-en">Advanced</span>
+                <span className="lang-zh">進階篩選</span>
+              </p>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 <label className="text-[10px] font-medium uppercase text-slate-500">
-                  Grade
+                  <span className="lang-en">Grade</span>
+                  <span className="lang-zh">評級</span>
                   <select
                     name="grade"
                     defaultValue={sp.grade ?? ""}
                     className="mt-1 min-h-[40px] w-full rounded border border-slate-300 bg-white px-2 text-sm dark:border-slate-600 dark:bg-slate-900"
                   >
-                    <option value="">Any</option>
+                    <option value="">Any / 任何</option>
                     <option value="A">A</option>
                     <option value="B">B</option>
                     <option value="C">C</option>
@@ -212,13 +216,14 @@ export default async function ResultsPage({ searchParams }: Props) {
                   </select>
                 </label>
                 <label className="text-[10px] font-medium uppercase text-slate-500">
-                  Risk status
+                  <span className="lang-en">Risk status</span>
+                  <span className="lang-zh">風險狀態</span>
                   <select
                     name="riskStatus"
                     defaultValue={sp.riskStatus ?? ""}
                     className="mt-1 min-h-[40px] w-full rounded border border-slate-300 bg-white px-2 text-sm dark:border-slate-600 dark:bg-slate-900"
                   >
-                    <option value="">Any</option>
+                    <option value="">Any / 任何</option>
                     <option value="Low Risk">Low Risk</option>
                     <option value="Moderate Risk">Moderate Risk</option>
                     <option value="High Risk">High Risk</option>
@@ -226,40 +231,44 @@ export default async function ResultsPage({ searchParams }: Props) {
                   </select>
                 </label>
                 <label className="text-[10px] font-medium uppercase text-slate-500">
-                  Late payment
+                  <span className="lang-en">Late payment</span>
+                  <span className="lang-zh">逾期還款</span>
                   <select
                     name="latePayment"
                     defaultValue={sp.latePayment ?? ""}
                     className="mt-1 min-h-[40px] w-full rounded border border-slate-300 bg-white px-2 text-sm dark:border-slate-600 dark:bg-slate-900"
                   >
-                    <option value="">Any</option>
-                    <option value="true">Yes</option>
+                    <option value="">Any / 任何</option>
+                    <option value="true">Yes / 是</option>
                   </select>
                 </label>
                 <label className="text-[10px] font-medium uppercase text-slate-500">
-                  Default
+                  <span className="lang-en">Default</span>
+                  <span className="lang-zh">違約</span>
                   <select
                     name="defaulted"
                     defaultValue={sp.defaulted ?? ""}
                     className="mt-1 min-h-[40px] w-full rounded border border-slate-300 bg-white px-2 text-sm dark:border-slate-600 dark:bg-slate-900"
                   >
-                    <option value="">Any</option>
-                    <option value="true">Yes</option>
+                    <option value="">Any / 任何</option>
+                    <option value="true">Yes / 是</option>
                   </select>
                 </label>
                 <label className="text-[10px] font-medium uppercase text-slate-500">
-                  Write-off
+                  <span className="lang-en">Write-off</span>
+                  <span className="lang-zh">撇帳</span>
                   <select
                     name="writeOff"
                     defaultValue={sp.writeOff ?? ""}
                     className="mt-1 min-h-[40px] w-full rounded border border-slate-300 bg-white px-2 text-sm dark:border-slate-600 dark:bg-slate-900"
                   >
-                    <option value="">Any</option>
-                    <option value="true">Yes</option>
+                    <option value="">Any / 任何</option>
+                    <option value="true">Yes / 是</option>
                   </select>
                 </label>
                 <label className="text-[10px] font-medium uppercase text-slate-500">
-                  Approval from
+                  <span className="lang-en">Approval from</span>
+                  <span className="lang-zh">批核日期（由）</span>
                   <input
                     type="date"
                     name="approvalDateFrom"
@@ -268,7 +277,8 @@ export default async function ResultsPage({ searchParams }: Props) {
                   />
                 </label>
                 <label className="text-[10px] font-medium uppercase text-slate-500">
-                  Approval to
+                  <span className="lang-en">Approval to</span>
+                  <span className="lang-zh">批核日期（至）</span>
                   <input
                     type="date"
                     name="approvalDateTo"

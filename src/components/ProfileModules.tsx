@@ -193,7 +193,7 @@ export function ProfileModules({ profile }: { profile: CustomerProfile }) {
               href={`/assistant?customer=${profile.id}`}
               className="mt-2 inline-block text-xs font-medium text-slate-900 underline-offset-2 hover:underline dark:text-slate-100"
             >
-              {langText(isZh, "AI assistant with this record →", "用此紀錄 AI 助手 →")}
+              {langText(isZh, "AI assistant with this record →", "以此紀錄開啟 AI 助手 →")}
             </Link>
           </div>
           <div className="flex flex-wrap gap-2 text-xs">
@@ -353,14 +353,14 @@ function Partakers({ profile, onChange }: { profile: CustomerProfile; onChange: 
     <div className="space-y-3 text-sm">
       <div className="flex items-center justify-between">
         <p className="text-xs text-slate-500">
-          {langText(isZh, "Structured partaker list with selectable rows.", "結構化關係人清單（可選列）。")}
+          {langText(isZh, "Structured partaker list with selectable rows.", "結構化參與人清單（可揀選）。")}
         </p>
         <a href={partakerCsvUrl} className="text-xs underline">
           {langText(isZh, "Partaker list export", "關係人清單匯出")}
         </a>
       </div>
       {rows.length === 0 ? (
-        <p className="text-slate-500">{langText(isZh, "No related partakers on file.", "未有相關關係人紀錄。")}</p>
+        <p className="text-slate-500">{langText(isZh, "No related partakers on file.", "暫未有相關參與人紀錄。")}</p>
       ) : (
         <div className="overflow-x-auto rounded border border-slate-200 dark:border-slate-700">
           <table className="min-w-full text-left text-xs">
@@ -394,7 +394,7 @@ function Partakers({ profile, onChange }: { profile: CustomerProfile; onChange: 
                     <div className="flex items-center gap-2">
                       <input type="checkbox" checked={Boolean(p.selected)} onChange={(e) => onChange(updateList(rows, i, { ...p, selected: e.target.checked }))} className="size-3.5" />
                       <button type="button" onClick={() => onChange(rows.filter((_, idx) => idx !== i))} className="text-[10px] text-red-600">
-                        Del
+                        {langText(isZh, "Del", "刪除")}
                       </button>
                     </div>
                   </td>
@@ -467,7 +467,7 @@ function Credit({ profile, onChange }: { profile: CustomerProfile; onChange: (cr
                   <div className="flex items-center gap-1">
                     <InlineInput value={r.debtor} onChange={(value) => onChange({ ...c, items: updateList(rows, i, { ...r, debtor: value }) })} />
                     <button type="button" onClick={() => onChange({ ...c, items: rows.filter((_, idx) => idx !== i) })} className="text-[10px] text-red-600">
-                      Del
+                      {langText(isZh, "Del", "刪除")}
                     </button>
                   </div>
                 </td>
@@ -585,7 +585,7 @@ function Loans({ profile, onChange }: { profile: CustomerProfile; onChange: (loa
                     {langText(isZh, "Detail", "詳情")}
                   </Link>
                   <button type="button" onClick={() => onChange(rows.filter((_, idx) => idx !== i))} className="text-[10px] text-red-600">
-                    Del
+                    {langText(isZh, "Del", "刪除")}
                   </button>
                 </div>
               </td>
@@ -624,7 +624,7 @@ function Partaking({ profile, onChange }: { profile: CustomerProfile; onChange: 
                 <InlineInput value={p.period} onChange={(value) => onChange(updateList(rows, i, { ...p, period: value }))} />
                 <InlineInput value={p.relatedApplication} onChange={(value) => onChange(updateList(rows, i, { ...p, relatedApplication: value }))} />
                 <button type="button" onClick={() => onChange(rows.filter((_, idx) => idx !== i))} className="text-left text-[11px] text-red-600">
-                  Delete row
+                  {langText(isZh, "Delete row", "刪除此列")}
                 </button>
               </div>
               <InlineInput value={p.description} onChange={(value) => onChange(updateList(rows, i, { ...p, description: value }))} className="mt-2 w-full" />
@@ -662,7 +662,7 @@ function Approval({ profile, onChange }: { profile: CustomerProfile; onChange: (
             <InlineInput value={a.stage} onChange={(value) => onChange(updateList(rows, i, { ...a, stage: value }))} />
             <InlineInput value={a.approvalDate || a.date || ""} onChange={(value) => onChange(updateList(rows, i, { ...a, approvalDate: value }))} />
             <button type="button" onClick={() => onChange(rows.filter((_, idx) => idx !== i))} className="text-left text-[11px] text-red-600">
-              Delete row
+              {langText(isZh, "Delete row", "刪除此列")}
             </button>
           </div>
           <InlineInput value={a.decision} onChange={(value) => onChange(updateList(rows, i, { ...a, decision: value }))} className="mb-2 w-full" />
@@ -738,7 +738,7 @@ function Repay({ profile, onChange }: { profile: CustomerProfile; onChange: (rep
               <div className="flex items-center gap-1">
                 <InlineInput value={r.remarks || r.balanceAfter || ""} onChange={(value) => onChange(updateList(rows, i, { ...r, remarks: value }))} />
                 <button type="button" onClick={() => onChange(rows.filter((_, idx) => idx !== i))} className="text-[10px] text-red-600">
-                  Del
+                  {langText(isZh, "Del", "刪除")}
                 </button>
               </div>
             </td>

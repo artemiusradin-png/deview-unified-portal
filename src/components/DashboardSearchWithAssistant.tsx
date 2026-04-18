@@ -117,14 +117,14 @@ export function DashboardSearchWithAssistant() {
             <p className="mt-2 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
               {isZh ? (
                 <>
-                  可詢問平台及需求問題。由{" "}
+                  可以查詢平台同需求相關問題。由{" "}
                   <Link
                     href="/assistant"
                     className="font-medium text-slate-900 underline underline-offset-2 hover:text-slate-700 dark:text-slate-100 dark:hover:text-slate-300"
                   >
                     客戶檔案開啟助手
                   </Link>{" "}
-                  後，回答會以該紀錄為依據。
+                  後，回答會以該客戶紀錄為基礎。
                 </>
               ) : (
                 <>
