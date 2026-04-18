@@ -17,14 +17,37 @@ export function PortalShell({ isAdmin, children }: Props) {
   const [sidebarHidden, setSidebarHidden] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+    <div className="relative flex h-screen overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+      <button
+        type="button"
+        onClick={() => setSidebarHidden((v) => !v)}
+        aria-label={sidebarHidden ? "Show sidebar menu" : "Hide sidebar menu"}
+        className={`sidebar-toggle hidden items-center justify-center rounded-full border border-slate-300 bg-white text-slate-700 shadow-sm transition-[left,background-color,border-color] duration-300 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 md:flex ${!sidebarHidden ? "active" : ""}`}
+        style={{ left: sidebarHidden ? "0.5rem" : "12.35rem" }}
+      >
+        <svg className={`ham hamRotate ham4 ${!sidebarHidden ? "active" : ""}`} viewBox="0 0 100 100" width="28" aria-hidden>
+          <path className="line top" d="m 70,33 h -40 c 0,0 -8.5,-0.149796 -8.5,8.5 0,8.649796 8.5,8.5 8.5,8.5 h 20 v -20" />
+          <path className="line middle" d="m 70,50 h -40" />
+          <path className="line bottom" d="m 30,67 h 40 c 0,0 8.5,0.149796 8.5,-8.5 0,-8.649796 -8.5,-8.5 -8.5,-8.5 h -20 v 20" />
+        </svg>
+      </button>
       {!sidebarHidden ? (
         <aside className="hidden h-screen w-52 shrink-0 border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 md:flex md:flex-col">
           <div className="border-b border-slate-200 px-4 py-4 dark:border-slate-800">
-            <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-500">Powered by DeView</p>
             <p className="text-sm font-semibold leading-tight">
               <span className="lang-en">Data Portal</span>
               <span className="lang-zh">數據平台</span>
+            </p>
+            <p className="mt-1 text-[9px] font-semibold uppercase tracking-wider text-slate-500">
+              Powered by{" "}
+              <a
+                href="https://deviewai.com"
+                target="_blank"
+                rel="noreferrer"
+                className="text-inherit no-underline hover:text-inherit"
+              >
+                DeView
+              </a>
             </p>
           </div>
           <nav className="flex flex-1 flex-col gap-1 p-3 text-sm">
@@ -66,16 +89,7 @@ export function PortalShell({ isAdmin, children }: Props) {
         </aside>
       ) : null}
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
-        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95">
-          <div className="hidden items-center justify-between px-3 py-2 md:flex">
-            <button
-              type="button"
-              onClick={() => setSidebarHidden((v) => !v)}
-              className="rounded-md border border-slate-300 px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
-            >
-              {sidebarHidden ? "Show menu" : "Hide menu"}
-            </button>
-          </div>
+        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95 md:hidden">
           <div className="flex items-center justify-between gap-2 px-3 py-2 pt-[max(0.5rem,env(safe-area-inset-top))] md:hidden">
             <span className="truncate text-sm font-semibold text-slate-900 dark:text-slate-50">
               <span className="lang-en">Data Portal</span>

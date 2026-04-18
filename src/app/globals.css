@@ -42,3 +42,46 @@ html[data-lang="zh-HK"] .lang-zh {
 html[data-lang="zh-HK"] .lang-zh.block {
   display: block;
 }
+
+.sidebar-toggle {
+  position: absolute;
+  top: 0.75rem;
+  z-index: 30;
+  height: 2rem;
+  width: 2rem;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ham {
+  cursor: pointer;
+  transition: transform 400ms;
+  user-select: none;
+}
+
+.hamRotate.active {
+  transform: rotate(45deg);
+}
+
+.line {
+  fill: none;
+  transition: stroke-dasharray 400ms, stroke-dashoffset 400ms;
+  stroke: currentColor;
+  stroke-width: 5.5;
+  stroke-linecap: round;
+}
+
+.ham4 .top {
+  stroke-dasharray: 40 121;
+}
+
+.ham4 .bottom {
+  stroke-dasharray: 40 121;
+}
+
+.ham4.active .top {
+  stroke-dashoffset: -68px;
+}
+
+.ham4.active .bottom {
+  stroke-dashoffset: -68px;
+}
